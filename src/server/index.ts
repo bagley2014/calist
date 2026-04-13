@@ -1,19 +1,16 @@
-import Fastify from "fastify";
-import cookie from "@fastify/cookie";
-import fastifyStatic from "@fastify/static";
-import { existsSync } from "node:fs";
-import { resolve } from "node:path";
-import { authenticateRequest } from "./auth";
-import { runMigrations } from "./db/migrate";
-import { registerAuthRoutes } from "./routes/auth";
-import { registerExportRoutes } from "./routes/export";
-import { registerItemRoutes } from "./routes/items";
-import { registerSettingsRoutes } from "./routes/settings";
+import Fastify from 'fastify';
+import { authenticateRequest } from './auth';
+import cookie from '@fastify/cookie';
+import { existsSync } from 'node:fs';
+import fastifyStatic from '@fastify/static';
+import { registerAuthRoutes } from './routes/auth';
+import { registerExportRoutes } from './routes/export';
+import { registerItemRoutes } from './routes/items';
+import { registerSettingsRoutes } from './routes/settings';
+import { resolve } from 'node:path';
+import { runMigrations } from './db/migrate';
 
-const app = Fastify({
-  logger: true,
-  trustProxy: true,
-});
+const app = Fastify({ logger: true, trustProxy: true });
 
 await runMigrations();
 
@@ -22,33 +19,30 @@ await registerAuthRoutes(app);
 await registerExportRoutes(app);
 
 await app.register(
-  async (protectedApp) => {
-    protectedApp.addHook("preHandler", authenticateRequest);
-    await registerItemRoutes(protectedApp);
-    await registerSettingsRoutes(protectedApp);
-  },
-  { prefix: "/api" },
+	async (protectedApp) => {
+		protectedApp.addHook('preHandler', authenticateRequest);
+		await registerItemRoutes(protectedApp);
+		await registerSettingsRoutes(protectedApp);
+	},
+	{ prefix: '/api' }
 );
 
-const clientRoot = resolve(process.cwd(), "dist/client");
+const clientRoot = resolve(process.cwd(), 'dist/client');
 
 if (existsSync(clientRoot)) {
-  await app.register(fastifyStatic, {
-    root: clientRoot,
-    prefix: "/",
-  });
+	await app.register(fastifyStatic, { root: clientRoot, prefix: '/' });
 
-  app.setNotFoundHandler(async (request, reply) => {
-    if (request.url.startsWith("/api/")) {
-      return reply.status(404).send({ error: "Route not found." });
-    }
+	app.setNotFoundHandler(async (request, reply) => {
+		if (request.url.startsWith('/api/')) {
+			return reply.status(404).send({ error: 'Route not found.' });
+		}
 
-    return reply.type("text/html").sendFile("index.html");
-  });
+		return reply.type('text/html').sendFile('index.html');
+	});
 } else {
-  app.get("/", async (_, reply) => {
-    reply.type("text/html");
-    return reply.send(`
+	app.get('/', async (_, reply) => {
+		reply.type('text/html');
+		return reply.send(`
       <!doctype html>
       <html lang="en">
         <head>
@@ -62,12 +56,9 @@ if (existsSync(clientRoot)) {
         </body>
       </html>
     `);
-  });
+	});
 }
 
-const port = Number.parseInt(process.env.PORT ?? "3000", 10);
+const port = Number.parseInt(process.env.PORT ?? '3000', 10);
 
-await app.listen({
-  host: "0.0.0.0",
-  port,
-});
+await app.listen({ host: '0.0.0.0', port });

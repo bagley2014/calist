@@ -1,0 +1,16 @@
+# Build outputs
+dist
+build
+*.tsbuildinfo
+
+# Dependencies
+node_modules
+
+# Package manager files
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lock
+
+# Coverage
+coverage

@@ -1,118 +1,104 @@
-import type { FastifyReply, FastifyRequest } from "fastify";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { eq } from "drizzle-orm";
-import { db } from "./db/client";
-import { configTable } from "./db/schema";
+import type { FastifyReply, FastifyRequest } from 'fastify';
+
+import bcrypt from 'bcryptjs';
+import { configTable } from './db/schema';
+import { db } from './db/client';
+import { eq } from 'drizzle-orm';
+import jwt from 'jsonwebtoken';
 
 const FAILED_LOGIN_DELAY_MS = 10_000;
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 
-export const AUTH_COOKIE = "scheduler_session";
+export const AUTH_COOKIE = 'scheduler_session';
 
-declare module "fastify" {
-  interface FastifyRequest {
-    auth?: {
-      subject: string;
-    };
-  }
+declare module 'fastify' {
+	interface FastifyRequest {
+		auth?: { subject: string };
+	}
 }
 
 export async function hashPassword(password: string) {
-  return bcrypt.hash(password, 12);
+	return bcrypt.hash(password, 12);
 }
 
 export async function verifyPassword(password: string, passwordHash: string) {
-  return bcrypt.compare(password, passwordHash);
+	return bcrypt.compare(password, passwordHash);
 }
 
 export async function delayFailedLogin() {
-  await Bun.sleep(FAILED_LOGIN_DELAY_MS);
+	await Bun.sleep(FAILED_LOGIN_DELAY_MS);
 }
 
 export async function getConfigValue(key: string) {
-  const row = await db.query.configTable.findFirst({
-    where: eq(configTable.key, key),
-  });
+	const row = await db.query.configTable.findFirst({ where: eq(configTable.key, key) });
 
-  return row?.value ?? null;
+	return row?.value ?? null;
 }
 
 export async function getRequiredConfigValue(key: string) {
-  const value = await getConfigValue(key);
+	const value = await getConfigValue(key);
 
-  if (!value) {
-    throw new Error(`Missing config value: ${key}`);
-  }
+	if (!value) {
+		throw new Error(`Missing config value: ${key}`);
+	}
 
-  return value;
+	return value;
 }
 
 export async function setConfigValue(key: string, value: string) {
-  await db
-    .insert(configTable)
-    .values({ key, value })
-    .onConflictDoUpdate({
-      target: configTable.key,
-      set: { value },
-    });
+	await db.insert(configTable).values({ key, value }).onConflictDoUpdate({ target: configTable.key, set: { value } });
 }
 
 export async function isSetupComplete() {
-  return Boolean(await getConfigValue("passwordHash"));
+	return Boolean(await getConfigValue('passwordHash'));
 }
 
 export function generateConfigSecret() {
-  return `${crypto.randomUUID().replaceAll("-", "")}${crypto.randomUUID().replaceAll("-", "")}`;
+	return `${crypto.randomUUID().replaceAll('-', '')}${crypto.randomUUID().replaceAll('-', '')}`;
 }
 
 export function generateApiKey() {
-  return crypto.randomUUID().replaceAll("-", "");
+	return crypto.randomUUID().replaceAll('-', '');
 }
 
 export async function issueSession(reply: FastifyReply) {
-  const sessionSecret = await getRequiredConfigValue("sessionSecret");
-  const token = jwt.sign({ sub: "scheduler-user" }, sessionSecret, {
-    expiresIn: "30d",
-  });
+	const sessionSecret = await getRequiredConfigValue('sessionSecret');
+	const token = jwt.sign({ sub: 'scheduler-user' }, sessionSecret, { expiresIn: '30d' });
 
-  reply.setCookie(AUTH_COOKIE, token, {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: SESSION_MAX_AGE_SECONDS,
-  });
+	reply.setCookie(AUTH_COOKIE, token, {
+		httpOnly: true,
+		sameSite: 'strict',
+		secure: process.env.NODE_ENV === 'production',
+		path: '/',
+		maxAge: SESSION_MAX_AGE_SECONDS,
+	});
 }
 
 export function clearSession(reply: FastifyReply) {
-  reply.clearCookie(AUTH_COOKIE, {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-  });
+	reply.clearCookie(AUTH_COOKIE, {
+		httpOnly: true,
+		sameSite: 'strict',
+		secure: process.env.NODE_ENV === 'production',
+		path: '/',
+	});
 }
 
-export async function authenticateRequest(
-  request: FastifyRequest,
-  reply: FastifyReply,
-) {
-  const token = request.cookies[AUTH_COOKIE];
+export async function authenticateRequest(request: FastifyRequest, reply: FastifyReply) {
+	const token = request.cookies[AUTH_COOKIE];
 
-  if (!token) {
-    return reply.status(401).send({ error: "Not authenticated." });
-  }
+	if (!token) {
+		return reply.status(401).send({ error: 'Not authenticated.' });
+	}
 
-  const sessionSecret = await getConfigValue("sessionSecret");
-  if (!sessionSecret) {
-    return reply.status(401).send({ error: "Session secret not configured." });
-  }
+	const sessionSecret = await getConfigValue('sessionSecret');
+	if (!sessionSecret) {
+		return reply.status(401).send({ error: 'Session secret not configured.' });
+	}
 
-  try {
-    const payload = jwt.verify(token, sessionSecret) as jwt.JwtPayload;
-    request.auth = { subject: String(payload.sub ?? "scheduler-user") };
-  } catch {
-    return reply.status(401).send({ error: "Invalid session." });
-  }
+	try {
+		const payload = jwt.verify(token, sessionSecret) as jwt.JwtPayload;
+		request.auth = { subject: String(payload.sub ?? 'scheduler-user') };
+	} catch {
+		return reply.status(401).send({ error: 'Invalid session.' });
+	}
 }
