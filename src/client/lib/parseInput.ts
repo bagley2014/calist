@@ -1,0 +1,92 @@
+import * as chrono from "chrono-node";
+import { RRule } from "rrule";
+import type { ParsedQuickAdd, Priority } from "@shared/types";
+
+const priorityPatterns: Array<{ priority: Priority; pattern: RegExp }> = [
+  { priority: "critical", pattern: /(?:\bcritical\b|!!!|!!\b)/i },
+  { priority: "high", pattern: /(?:\bhigh\b|!\b)/i },
+  { priority: "low", pattern: /\blow\b/i },
+  { priority: "medium", pattern: /\bmedium\b/i },
+];
+
+const dateIntentPattern = /\b(today|tomorrow|tonight|monday|tuesday|wednesday|thursday|friday|saturday|sunday|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|am|pm|next|this|weekend|in\s+\d+)\b/i;
+const recurrencePattern = /\b(every\s+.+|daily|weekly|monthly|yearly)\b/i;
+
+export function parseInput(input: string): ParsedQuickAdd {
+  const trimmed = input.trim();
+  if (!trimmed) {
+    throw new Error("Type something to add.");
+  }
+
+  const now = new Date();
+  const parsedResults = chrono.parse(trimmed, now, { forwardDate: true });
+  const dateResult = parsedResults[0] ?? null;
+  const recurrenceMatch = trimmed.match(recurrencePattern);
+  let startsAt = dateResult ? Math.floor(dateResult.start.date().getTime() / 1000) : null;
+  let endsAt = dateResult?.end ? Math.floor(dateResult.end.date().getTime() / 1000) : null;
+  let isAllDay = dateResult ? !(dateResult.start.isCertain("hour") || dateResult.start.isCertain("minute")) : false;
+
+  const detectedPriority = priorityPatterns.find(({ pattern }) => pattern.test(trimmed))?.priority ?? "medium";
+  let recurrenceRule: string | null = null;
+  let recurrenceText: string | null = null;
+
+  if (recurrenceMatch) {
+    const recurrenceSource = recurrenceMatch[0].trim();
+
+    try {
+      const options = RRule.parseText(recurrenceSource);
+      if (options && typeof options.freq === "number") {
+        const dtstart = startsAt ? new Date(startsAt * 1000) : now;
+        const rule = new RRule({ ...options, dtstart });
+        recurrenceRule = rule
+          .toString()
+          .split("\n")
+          .find((line) => line.startsWith("RRULE:"))
+          ?.replace(/^RRULE:/, "") ?? null;
+        recurrenceText = RRule.fromString(recurrenceRule ?? rule.toString()).toText();
+
+        if (startsAt === null) {
+          const firstOccurrence = rule.after(new Date(Date.now() - 1000), true);
+          if (firstOccurrence) {
+            startsAt = Math.floor(firstOccurrence.getTime() / 1000);
+            isAllDay = !/\b\d{1,2}(:\d{2})?\s?(am|pm)\b/i.test(recurrenceSource);
+          }
+        }
+      }
+    } catch {
+      recurrenceRule = null;
+      recurrenceText = null;
+    }
+  }
+
+  if (!dateResult && !recurrenceRule && dateIntentPattern.test(trimmed)) {
+    throw new Error("I couldn't resolve that date or time.");
+  }
+
+  let title = trimmed;
+  if (dateResult) {
+    title = title.replace(dateResult.text, " ");
+  }
+  if (recurrenceMatch) {
+    title = title.replace(recurrenceMatch[0], " ");
+  }
+  for (const { pattern } of priorityPatterns) {
+    title = title.replace(pattern, " ");
+  }
+  title = title.replace(/\s+/g, " ").trim();
+
+  if (!title) {
+    throw new Error("Add a title so this item is recognizable later.");
+  }
+
+  return {
+    title,
+    notes: null,
+    priority: detectedPriority,
+    startsAt,
+    endsAt,
+    isAllDay,
+    rrule: recurrenceRule,
+    recurrenceText,
+  };
+}

@@ -21,11 +21,14 @@ await app.register(cookie);
 await registerAuthRoutes(app);
 await registerExportRoutes(app);
 
-await app.register(async (protectedApp) => {
-  protectedApp.addHook("preHandler", authenticateRequest);
-  await registerItemRoutes(protectedApp);
-  await registerSettingsRoutes(protectedApp);
-});
+await app.register(
+  async (protectedApp) => {
+    protectedApp.addHook("preHandler", authenticateRequest);
+    await registerItemRoutes(protectedApp);
+    await registerSettingsRoutes(protectedApp);
+  },
+  { prefix: "/api" },
+);
 
 const clientRoot = resolve(process.cwd(), "dist/client");
 
@@ -35,8 +38,12 @@ if (existsSync(clientRoot)) {
     prefix: "/",
   });
 
-  app.get("/*", async (_, reply) => {
-    return reply.sendFile("index.html");
+  app.setNotFoundHandler(async (request, reply) => {
+    if (request.url.startsWith("/api/")) {
+      return reply.status(404).send({ error: "Route not found." });
+    }
+
+    return reply.type("text/html").sendFile("index.html");
   });
 } else {
   app.get("/", async (_, reply) => {
