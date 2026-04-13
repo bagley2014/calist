@@ -5,11 +5,13 @@ After=network.target
 [Service]
 Type=simple
 User=scheduler
+Group=scheduler
 WorkingDirectory=/opt/scheduler
-ExecStart=/usr/local/bin/bun run src/server/index.ts
+ExecStart=/usr/bin/env bun run src/server/index.ts
+Environment=NODE_ENV=production
+Environment=PORT=3100
 Restart=on-failure
 RestartSec=5
-Environment=PORT=3100
 
 [Install]
 WantedBy=multi-user.target
