@@ -59,6 +59,6 @@ if (existsSync(clientRoot)) {
 	});
 }
 
-const port = Number.parseInt(process.env.PORT ?? '3000', 10);
+const port = Number.parseInt(process.env.PORT ?? '3100', 10);
 
 await app.listen({ host: '0.0.0.0', port });

@@ -21,7 +21,7 @@ Run these locally to verify changes:
 ```
 bun install
 bun run migrate         # apply Drizzle/SQL migrations
-bun run dev:server      # backend (PORT or 3000)
+bun run dev:server      # backend (PORT or 3100)
 bun run dev:client      # Vite (5173)
 bun run build           # production build
 bun run format          # code formatter used by this repo
@@ -60,7 +60,7 @@ bun run format          # code formatter used by this repo
 After making changes, verify as appropriate:
 
 1. Run `bun run migrate` to ensure migrations apply cleanly.
-2. Start backend: `bun run dev:server` and confirm it listens (default 3000).
+2. Start backend: `bun run dev:server` and confirm it listens (default 3100).
 3. Start frontend: `bun run dev:client` and verify UI flows (http://localhost:5173).
 4. Manually test key flows: quick add, recurring events, iCal export, and authentication flows.
 
@@ -78,4 +78,4 @@ After making changes, verify as appropriate:
 ## Notes for automated tools
 
 - This repository uses Bun scripts. When running commands in CI or locally, ensure Bun is available in the environment.
-- Ports: server default is 3000; Vite dev is 5173.
+- Ports: server default is 3100; Vite dev is 5173.

@@ -20,7 +20,7 @@ bun run dev:server
 bun run dev:client
 ```
 
-The server listens on `PORT` or `3000` by default. The Vite client runs on `5173` in development.
+The server listens on `PORT` or `3100` by default. The Vite client runs on `5173` in development.
 
 ## Production build
 
@@ -28,7 +28,7 @@ The server listens on `PORT` or `3000` by default. The Vite client runs on `5173
 bun install
 bun run migrate
 bun run build
-PORT=3000 bun run src/server/index.ts
+PORT=3100 bun run src/server/index.ts
 ```
 
 The SQLite database is stored in `data/scheduler.db` so updates to the source tree do not affect persisted state.
