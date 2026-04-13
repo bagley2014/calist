@@ -288,12 +288,7 @@ export default function App() {
 		<main className="app-shell">
 			<header className="hero">
 				<div>
-					<span className="eyebrow">Personal Scheduler</span>
-					<h1>Keep the schedule flat, fast, and local.</h1>
-					<p>
-						Quick-add is the primary path. Detail editing and calendar context stay nearby without taking over the
-						screen.
-					</p>
+					<span className="eyebrow">Listcal</span>
 				</div>
 				<div className="hero__actions">
 					<button
