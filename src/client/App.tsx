@@ -62,6 +62,7 @@ export default function App() {
 	const [busy, setBusy] = useState(false);
 	const [notice, setNotice] = useState<string | null>(null);
 	const [isOffline, setIsOffline] = useState(!navigator.onLine);
+	const [settingsOpen, setSettingsOpen] = useState(false);
 	const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
 	const selectedItem = items.find((item) => item.id === selectedItemId) ?? null;
@@ -92,6 +93,21 @@ export default function App() {
 			window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 		};
 	}, []);
+
+	useEffect(() => {
+		if (!settingsOpen) {
+			return;
+		}
+
+		function handleEscape(event: KeyboardEvent) {
+			if (event.key === 'Escape') {
+				setSettingsOpen(false);
+			}
+		}
+
+		window.addEventListener('keydown', handleEscape);
+		return () => window.removeEventListener('keydown', handleEscape);
+	}, [settingsOpen]);
 
 	async function bootstrap() {
 		try {
@@ -238,6 +254,7 @@ export default function App() {
 		setScreen('login');
 		setItems([]);
 		setSelectedItemId(null);
+		setSettingsOpen(false);
 	}
 
 	async function triggerInstall() {
@@ -305,6 +322,9 @@ export default function App() {
 					>
 						Calendar
 					</button>
+					<button type="button" className="button button--ghost" onClick={() => setSettingsOpen(true)}>
+						Settings
+					</button>
 					<button type="button" className="button button--ghost" onClick={() => void logout()}>
 						Log out
 					</button>
@@ -327,27 +347,38 @@ export default function App() {
 				</div>
 			) : null}
 
-			<section className="control-strip">
-				<div className="settings-card">
-					<span className="eyebrow">Settings</span>
-					<h2>Export and install</h2>
-					<p>Subscribe from another calendar with the private ICS URL, or install the app to your home screen.</p>
-					<label>
-						ICS feed URL
-						<input readOnly value={settings?.exportUrl ?? ''} />
-					</label>
-					<div className="settings-card__actions">
-						<button type="button" className="button button--ghost" onClick={() => void regenerateIcsKey()}>
-							Regenerate key
-						</button>
-						{installPrompt ? (
-							<button type="button" className="button" onClick={() => void triggerInstall()}>
-								Install PWA
+			{settingsOpen ? (
+				<div className="modal-backdrop" role="presentation" onClick={() => setSettingsOpen(false)}>
+					<section
+						className="settings-card modal-card"
+						role="dialog"
+						aria-modal="true"
+						aria-labelledby="settings-heading"
+						onClick={(event) => event.stopPropagation()}
+					>
+						<span className="eyebrow">Settings</span>
+						<h2 id="settings-heading">Export and install</h2>
+						<p>Subscribe from another calendar with the private ICS URL, or install the app to your home screen.</p>
+						<label>
+							ICS feed URL
+							<input readOnly value={settings?.exportUrl ?? ''} />
+						</label>
+						<div className="settings-card__actions">
+							<button type="button" className="button button--ghost" onClick={() => void regenerateIcsKey()}>
+								Regenerate key
 							</button>
-						) : null}
-					</div>
+							{installPrompt ? (
+								<button type="button" className="button" onClick={() => void triggerInstall()}>
+									Install PWA
+								</button>
+							) : null}
+							<button type="button" className="button button--ghost" onClick={() => setSettingsOpen(false)}>
+								Close
+							</button>
+						</div>
+					</section>
 				</div>
-			</section>
+			) : null}
 
 			<div className="content-grid">
 				{view === 'list' ? (

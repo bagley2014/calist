@@ -247,6 +247,23 @@ textarea {
 	margin-bottom: 1.5rem;
 }
 
+.modal-backdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 40;
+	padding: 1rem;
+	display: grid;
+	place-items: center;
+	background: rgba(28, 41, 48, 0.42);
+	backdrop-filter: blur(4px);
+}
+
+.modal-card {
+	width: min(560px, 100%);
+	max-height: min(84vh, 720px);
+	overflow: auto;
+}
+
 .settings-card {
 	padding: 1.2rem;
 	max-width: 540px;
@@ -454,6 +471,10 @@ textarea {
 	.app-shell,
 	.auth-shell {
 		padding: 1rem;
+	}
+
+	.modal-backdrop {
+		padding: 0.75rem;
 	}
 
 	.quick-add__bar {
