@@ -70,7 +70,7 @@ export function ListView({
 
 			{undatedItems.length > 0 ? (
 				<div className="list-group">
-					<h3>Undated</h3>
+					<h3>To-Do</h3>
 					{undatedItems.map((item) => (
 						<article
 							key={item.id}
