@@ -55,7 +55,6 @@ export function ListView({
 			<div className="section-head">
 				<div>
 					<span className="eyebrow">List</span>
-					<h2>Today’s shape, without extra buckets</h2>
 				</div>
 				<div className="section-head__actions">
 					<button type="button" className="button button--ghost" onClick={onToggleShowCompleted}>
