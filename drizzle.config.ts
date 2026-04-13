@@ -4,5 +4,5 @@ export default defineConfig({
 	dialect: 'sqlite',
 	schema: './src/server/db/schema.ts',
 	out: './src/server/db/migrations',
-	dbCredentials: { url: './data/scheduler.db' },
+	dbCredentials: { url: './data/calist.db' },
 });

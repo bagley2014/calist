@@ -48,10 +48,10 @@ if (existsSync(clientRoot)) {
         <head>
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <title>Personal Scheduler</title>
+		  <title>Calist</title>
         </head>
         <body style="font-family: sans-serif; padding: 2rem;">
-          <h1>Personal Scheduler</h1>
+		  <h1>Calist</h1>
           <p>Build the client with <code>bun run build</code> or run <code>bun run dev:client</code> during development.</p>
         </body>
       </html>

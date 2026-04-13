@@ -9,7 +9,7 @@ import jwt from 'jsonwebtoken';
 const FAILED_LOGIN_DELAY_MS = 10_000;
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 
-export const AUTH_COOKIE = 'scheduler_session';
+export const AUTH_COOKIE = 'calist_session';
 
 declare module 'fastify' {
 	interface FastifyRequest {
@@ -63,7 +63,7 @@ export function generateApiKey() {
 
 export async function issueSession(reply: FastifyReply) {
 	const sessionSecret = await getRequiredConfigValue('sessionSecret');
-	const token = jwt.sign({ sub: 'scheduler-user' }, sessionSecret, { expiresIn: '30d' });
+	const token = jwt.sign({ sub: 'calist-user' }, sessionSecret, { expiresIn: '30d' });
 
 	reply.setCookie(AUTH_COOKIE, token, {
 		httpOnly: true,
@@ -97,7 +97,7 @@ export async function authenticateRequest(request: FastifyRequest, reply: Fastif
 
 	try {
 		const payload = jwt.verify(token, sessionSecret) as jwt.JwtPayload;
-		request.auth = { subject: String(payload.sub ?? 'scheduler-user') };
+		request.auth = { subject: String(payload.sub ?? 'calist-user') };
 	} catch {
 		return reply.status(401).send({ error: 'Invalid session.' });
 	}

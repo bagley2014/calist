@@ -1,6 +1,6 @@
 {
-	"name": "Personal Scheduler",
-	"short_name": "Scheduler",
+	"name": "Calist",
+	"short_name": "Calist",
 	"start_url": "/",
 	"display": "standalone",
 	"background_color": "#f3ede2",

@@ -8,7 +8,7 @@ import { resolve } from 'node:path';
 const dataDir = resolve(process.cwd(), 'data');
 mkdirSync(dataDir, { recursive: true });
 
-const databaseFile = resolve(dataDir, 'scheduler.db');
+const databaseFile = resolve(dataDir, 'calist.db');
 
 export const sqlite = new Database(databaseFile, { create: true });
 sqlite.exec('PRAGMA journal_mode = WAL;');

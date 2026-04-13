@@ -46,9 +46,9 @@ export async function registerExportRoutes(app: FastifyInstance) {
 		const lines = [
 			'BEGIN:VCALENDAR',
 			'VERSION:2.0',
-			'PRODID:-//GitHub Copilot//Personal Scheduler//EN',
+			'PRODID:-//GitHub Copilot//Calist//EN',
 			'CALSCALE:GREGORIAN',
-			'X-WR-CALNAME:Personal Scheduler',
+			'X-WR-CALNAME:Calist',
 		];
 
 		for (const item of items) {
@@ -58,7 +58,7 @@ export async function registerExportRoutes(app: FastifyInstance) {
 
 			if (item.startsAt === null) {
 				lines.push('BEGIN:VTODO');
-				lines.push(`UID:${item.id}@scheduler`);
+				lines.push(`UID:${item.id}@calist`);
 				lines.push(`SUMMARY:${escapeIcsText(item.title)}`);
 				if (item.notes) {
 					lines.push(`DESCRIPTION:${escapeIcsText(item.notes)}`);
@@ -71,7 +71,7 @@ export async function registerExportRoutes(app: FastifyInstance) {
 			}
 
 			lines.push('BEGIN:VEVENT');
-			lines.push(`UID:${item.id}@scheduler`);
+			lines.push(`UID:${item.id}@calist`);
 			lines.push(`SUMMARY:${escapeIcsText(item.title)}`);
 			if (item.notes) {
 				lines.push(`DESCRIPTION:${escapeIcsText(item.notes)}`);

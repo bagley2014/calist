@@ -141,7 +141,7 @@ export default function App() {
 				return;
 			}
 
-			setAuthError(error instanceof Error ? error.message : 'Unable to load scheduler data.');
+			setAuthError(error instanceof Error ? error.message : 'Unable to load Calist data.');
 			setScreen('login');
 		}
 	}
@@ -268,19 +268,19 @@ export default function App() {
 	}
 
 	if (screen === 'loading') {
-		return <div className="splash">Loading scheduler...</div>;
+		return <div className="splash">Loading Calist...</div>;
 	}
 
 	if (screen === 'setup' || screen === 'login') {
 		return (
 			<main className="auth-shell">
 				<section className="auth-card">
-					<span className="eyebrow">Personal Scheduler</span>
+					<span className="eyebrow">Calist</span>
 					<h1>{screen === 'setup' ? 'First run setup' : 'Welcome back'}</h1>
 					<p>
 						{screen === 'setup'
 							? 'Set the password that will protect the app on this device.'
-							: 'Enter your password to unlock the scheduler.'}
+							: 'Enter your password to unlock Calist.'}
 					</p>
 					<label>
 						Password
@@ -305,7 +305,7 @@ export default function App() {
 		<main className="app-shell">
 			<header className="hero">
 				<div>
-					<span className="eyebrow">Listcal</span>
+					<span className="eyebrow">Calist</span>
 				</div>
 				<div className="hero__actions">
 					<button

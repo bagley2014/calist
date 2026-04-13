@@ -1,12 +1,12 @@
 [Unit]
-Description=Personal Scheduler
+Description=Calist
 After=network.target
 
 [Service]
 Type=simple
-User=scheduler
-Group=scheduler
-WorkingDirectory=/opt/scheduler
+User=calist
+Group=calist
+WorkingDirectory=/opt/calist
 ExecStart=/usr/bin/env bun run src/server/index.ts
 Environment=NODE_ENV=production
 Environment=PORT=3100

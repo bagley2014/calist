@@ -1,4 +1,4 @@
-const SHELL_CACHE = 'scheduler-shell-v1';
+const SHELL_CACHE = 'calist-shell-v1';
 const SHELL_ASSETS = ['/', '/manifest.json', '/icons/icon-192.svg', '/icons/icon-512.svg'];
 
 self.addEventListener('install', (event) => {
@@ -7,7 +7,11 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-	event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== SHELL_CACHE).map((key) => caches.delete(key)))));
+	event.waitUntil(
+		caches
+			.keys()
+			.then((keys) => Promise.all(keys.filter((key) => key !== SHELL_CACHE).map((key) => caches.delete(key))))
+	);
 	self.clients.claim();
 });
 
@@ -23,11 +27,11 @@ self.addEventListener('fetch', (event) => {
 		event.respondWith(
 			fetch(request).catch(
 				() =>
-					new Response(JSON.stringify({ error: 'You are offline. Live scheduler data is unavailable.' }), {
+					new Response(JSON.stringify({ error: 'You are offline. Live Calist data is unavailable.' }), {
 						status: 503,
 						headers: { 'Content-Type': 'application/json' },
-					}),
-			),
+					})
+			)
 		);
 		return;
 	}
@@ -48,6 +52,6 @@ self.addEventListener('fetch', (event) => {
 				void caches.open(SHELL_CACHE).then((cache) => cache.put(request, copy));
 				return response;
 			});
-		}),
+		})
 	);
 });

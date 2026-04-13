@@ -22,7 +22,7 @@ async function configureServiceWorker() {
 
 	if ('caches' in window) {
 		const keys = await caches.keys();
-		await Promise.all(keys.filter((key) => key.startsWith('scheduler-shell-')).map((key) => caches.delete(key)));
+		await Promise.all(keys.filter((key) => key.startsWith('calist-shell-')).map((key) => caches.delete(key)));
 	}
 }
 

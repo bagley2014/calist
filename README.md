@@ -1,6 +1,6 @@
-# Personal Scheduler
+# Calist
 
-A Bun-powered personal scheduler with a Fastify API, a React + TypeScript frontend, SQLite storage, quick natural-language entry, installable PWA support, and iCal export.
+A Bun-powered personal planner with a Fastify API, a React + TypeScript frontend, SQLite storage, quick natural-language entry, installable PWA support, and iCal export.
 
 ## Stack
 
@@ -31,7 +31,7 @@ bun run build
 NODE_ENV=production PORT=3100 bun run src/server/index.ts
 ```
 
-The SQLite database is stored in `data/scheduler.db` so updates to the source tree do not affect persisted state.
+The SQLite database is stored in `data/calist.db` so updates to the source tree do not affect persisted state.
 
 ## PWA notes
 
@@ -46,8 +46,8 @@ The app is designed to run as a single Fastify process behind a TLS-terminating 
 ### 1) Prepare the host
 
 - Install Bun on the target host.
-- Create a service user (example: `scheduler`).
-- Copy this project to a deployment directory (example: `/opt/scheduler`).
+- Create a service user (example: `calist`).
+- Copy this project to a deployment directory (example: `/opt/calist`).
 
 ### 2) Install and build
 
@@ -62,24 +62,24 @@ bun run migrate
 Notes:
 
 - `bun run build` is required if you want the server to also serve the frontend. Without it, `/` returns a fallback page.
-- The SQLite file is created at `data/scheduler.db` relative to the process working directory.
+- The SQLite file is created at `data/calist.db` relative to the process working directory.
 
 ### 3) Configure systemd
 
-The repository includes `scheduler.service` as a starting point, but you should verify Bun path and environment for your machine.
+The repository includes `calist.service` as a starting point, but you should verify Bun path and environment for your machine.
 
 Recommended unit (adjust user/group/paths as needed):
 
 ```ini
 [Unit]
-Description=Personal Scheduler
+Description=Calist
 After=network.target
 
 [Service]
 Type=simple
-User=scheduler
-Group=scheduler
-WorkingDirectory=/opt/scheduler
+User=calist
+Group=calist
+WorkingDirectory=/opt/calist
 ExecStart=/usr/bin/env bun run src/server/index.ts
 Environment=NODE_ENV=production
 Environment=PORT=3100
@@ -94,8 +94,8 @@ Then enable and start:
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now scheduler
-sudo systemctl status scheduler
+sudo systemctl enable --now calist
+sudo systemctl status calist
 ```
 
 ### 4) Put a reverse proxy in front
@@ -105,7 +105,7 @@ Proxy all traffic to `127.0.0.1:3100`, and keep forwarding host/protocol informa
 Example Caddyfile:
 
 ```caddy
-scheduler.example.com {
+calist.example.com {
 	reverse_proxy 127.0.0.1:3100
 }
 ```

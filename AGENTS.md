@@ -35,7 +35,7 @@ bun run format          # code formatter used by this repo
 - Migrations: `src/server/db/migrations/`
 - Frontend: `src/client/` (App.tsx, main.tsx, components/)
 - Public assets / PWA: `public/` (manifest.json, sw.js, icons)
-- Persistent DB (do not commit changes): `data/scheduler.db`
+- Persistent DB (do not commit changes): `data/calist.db`
 
 ## Agent editing guidelines
 
@@ -45,7 +45,7 @@ bun run format          # code formatter used by this repo
 - Formatting: run `bun run format` before finishing edits.
 - Dependencies: if you add dependencies, update `package.json` and run `bun install`.
 - Migrations: do not add schema-breaking migrations without asking. Always run `bun run migrate` locally to validate.
-- Database: never commit or alter `data/scheduler.db` in the repository. If tests or local runs need a fresh DB, use a temporary copy.
+- Database: never commit or alter `data/calist.db` in the repository. If tests or local runs need a fresh DB, use a temporary copy.
 
 ## Edit/patch conventions for automated edits
 
