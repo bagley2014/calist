@@ -230,7 +230,7 @@ textarea {
 	align-items: center;
 	justify-content: space-between;
 	padding: 0.9rem 1rem;
-	margin-top: 0.85rem;
+	margin: 0.85rem 0;
 }
 
 .confirm-chip__actions {
