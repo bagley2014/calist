@@ -160,14 +160,16 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 				>
 					Save changes
 				</button>
-				<button
-					type="button"
-					className="button button--ghost"
-					disabled={busy}
-					onClick={() => runAction(() => onToggleComplete(item, !item.completed))}
-				>
-					{item.completed ? 'Mark active' : 'Mark complete'}
-				</button>
+				{item.startsAt === null && (
+					<button
+						type="button"
+						className="button button--ghost"
+						disabled={busy}
+						onClick={() => runAction(() => onToggleComplete(item, !item.completed))}
+					>
+						{item.completed ? 'Mark incomplete' : 'Mark complete'}
+					</button>
+				)}
 				{item.rrule ? (
 					<button
 						type="button"

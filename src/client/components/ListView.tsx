@@ -118,16 +118,6 @@ export function ListView({
 									{item.rrule ? ` · ${humanizeRRule(item.rrule)}` : ''}
 								</p>
 							</div>
-							<button
-								type="button"
-								className="button button--ghost"
-								onClick={(event) => {
-									event.stopPropagation();
-									onToggleComplete(item, !item.completed);
-								}}
-							>
-								{item.completed ? 'Undo' : 'Done'}
-							</button>
 						</article>
 					))}
 				</div>
