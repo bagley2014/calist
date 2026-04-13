@@ -3,6 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
+	"repository": "https://github.com/bagley2014/calist",
 	"scripts": {
 		"dev": "bunx concurrently -k \"bun run dev:server\" \"bun run dev:client\"",
 		"dev:server": "bun --watch src/server/index.ts",
