@@ -103,6 +103,7 @@ else
     log_info "Cloning repository..."
     mkdir -p "$(dirname "$DEPLOY_DIR")"
     git clone -b master "$REPO_URL" "$DEPLOY_DIR"
+	git config --global --add safe.directory $DEPLOY_DIR
     cd "$DEPLOY_DIR"
     log_success "Repository cloned"
 fi
