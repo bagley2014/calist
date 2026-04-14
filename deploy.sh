@@ -46,22 +46,7 @@ fi
 
 log_info "Starting Calist deployment..."
 
-# Step 1: Install Bun if needed
-log_info "Checking for Bun installation..."
-if ! command -v bun &> /dev/null; then
-    log_warn "Bun not found. Installing Bun..."
-    export SHELL=/bin/bash
-    curl -fsSL https://bun.com/install | bash
-    export PATH="$HOME/.bun/bin:$PATH"
-    if ! command -v bun &> /dev/null; then
-        error_exit "Bun installation failed"
-    fi
-    log_success "Bun installed successfully"
-else
-    log_success "Bun already installed ($(bun --version))"
-fi
-
-# Step 2: Check for updates before doing anything disruptive
+# Step 1: Check for updates before doing anything disruptive
 log_info "Checking repository state in $DEPLOY_DIR..."
 
 if [ -d "$DEPLOY_DIR/.git" ]; then
@@ -80,7 +65,7 @@ else
     NEEDS_CLONE=true
 fi
 
-# Step 3: Stop existing service if running
+# Step 2: Stop existing service if running
 log_info "Checking for existing Calist service..."
 if systemctl is-active --quiet $SERVICE_NAME; then
     log_warn "Stopping existing $SERVICE_NAME service..."
@@ -90,7 +75,7 @@ else
     log_info "$SERVICE_NAME service is not running"
 fi
 
-# Step 4: Clone or pull repository
+# Step 3: Clone or pull repository
 log_info "Setting up repository in $DEPLOY_DIR..."
 
 if [ "$NEEDS_CLONE" = false ]; then
@@ -108,7 +93,7 @@ else
     log_success "Repository cloned"
 fi
 
-# Step 5: Create calist user and group if they don't exist
+# Step 4: Create calist user and group if they don't exist
 log_info "Checking for $SERVICE_USER user and group..."
 
 if ! id "$SERVICE_USER" &>/dev/null; then
@@ -125,14 +110,30 @@ chown -R "$SERVICE_USER:$SERVICE_GROUP" "$DEPLOY_DIR"
 chmod 755 "$DEPLOY_DIR"
 log_success "Permissions set"
 
+# Step 5: Install Bun if needed (as service user)
+log_info "Checking for Bun installation for user $SERVICE_USER..."
+if ! sudo -u "$SERVICE_USER" -H bash -lc 'export PATH="$HOME/.bun/bin:$PATH"; command -v bun >/dev/null'; then
+    log_warn "Bun not found for $SERVICE_USER. Installing Bun..."
+    sudo -u "$SERVICE_USER" -H bash -lc 'export SHELL=/bin/bash; curl -fsSL https://bun.com/install | bash' || error_exit "Bun installation failed"
+    if ! sudo -u "$SERVICE_USER" -H bash -lc 'export PATH="$HOME/.bun/bin:$PATH"; command -v bun >/dev/null'; then
+        error_exit "Bun installation failed"
+    fi
+    log_success "Bun installed successfully for $SERVICE_USER"
+else
+    BUN_VERSION=$(sudo -u "$SERVICE_USER" -H bash -lc 'export PATH="$HOME/.bun/bin:$PATH"; bun --version')
+    log_success "Bun already installed for $SERVICE_USER ($BUN_VERSION)"
+fi
+
+BUN_PATH=$(sudo -u "$SERVICE_USER" -H bash -lc 'export PATH="$HOME/.bun/bin:$PATH"; command -v bun')
+
 # Step 6: Install dependencies, build, and migrate
 log_info "Installing dependencies..."
 cd "$DEPLOY_DIR"
-sudo -u "$SERVICE_USER" bun install --frozen-lockfile || error_exit "bun install failed"
+sudo -u "$SERVICE_USER" -H bash -lc 'export PATH="$HOME/.bun/bin:$PATH"; bun install --frozen-lockfile' || error_exit "bun install failed"
 log_success "Dependencies installed"
 
 log_info "Building application..."
-sudo -u "$SERVICE_USER" bun run build || error_exit "bun run build failed"
+sudo -u "$SERVICE_USER" -H bash -lc 'export PATH="$HOME/.bun/bin:$PATH"; bun run build' || error_exit "bun run build failed"
 log_success "Application built"
 
 # Ensure data directory exists with proper permissions
@@ -142,7 +143,7 @@ chown "$SERVICE_USER:$SERVICE_GROUP" "$DEPLOY_DIR/data"
 chmod 755 "$DEPLOY_DIR/data"
 
 log_info "Running database migrations..."
-sudo -u "$SERVICE_USER" bun run migrate || error_exit "bun run migrate failed"
+sudo -u "$SERVICE_USER" -H bash -lc 'export PATH="$HOME/.bun/bin:$PATH"; bun run migrate' || error_exit "bun run migrate failed"
 log_success "Database migrations completed"
 
 # Step 7: Install systemd service
@@ -157,7 +158,7 @@ cp "$DEPLOY_DIR/calist.service" /etc/systemd/system/$SERVICE_NAME.service
 
 # Update paths in the service file if they differ from defaults
 sed -i "s|WorkingDirectory=.*|WorkingDirectory=$DEPLOY_DIR|g" /etc/systemd/system/$SERVICE_NAME.service
-sed -i "s|ExecStart=.*|ExecStart=$(command -v bun) run src/server/index.ts|g" /etc/systemd/system/$SERVICE_NAME.service
+sed -i "s|ExecStart=.*|ExecStart=$BUN_PATH run src/server/index.ts|g" /etc/systemd/system/$SERVICE_NAME.service
 sed -i "s|User=.*|User=$SERVICE_USER|g" /etc/systemd/system/$SERVICE_NAME.service
 sed -i "s|Group=.*|Group=$SERVICE_GROUP|g" /etc/systemd/system/$SERVICE_NAME.service
 
