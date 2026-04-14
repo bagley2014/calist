@@ -50,31 +50,37 @@ describe('parseInput', () => {
 		it('detects "critical" priority keyword', () => {
 			const result = parseInput('Server is down critical');
 			expect(result.priority).toBe('critical');
+			expect(result.title).toBe('Server is down');
 		});
 
 		it('detects "!!!" as critical priority', () => {
 			const result = parseInput('Deploy hotfix !!!');
 			expect(result.priority).toBe('critical');
+			expect(result.title).toBe('Deploy hotfix');
 		});
 
 		it('detects "high" priority keyword', () => {
 			const result = parseInput('Review PR high priority');
 			expect(result.priority).toBe('high');
+			expect(result.title).toBe('Review PR');
 		});
 
 		it('detects "medium priority" explicitly', () => {
 			const result = parseInput('Check logs medium priority');
 			expect(result.priority).toBe('medium');
+			expect(result.title).toBe('Check logs');
 		});
 
 		it('detects "low" priority keyword', () => {
 			const result = parseInput('Organize bookmarks low priority');
 			expect(result.priority).toBe('low');
+			expect(result.title).toBe('Organize bookmarks');
 		});
 
 		it('defaults to medium when no priority is specified', () => {
 			const result = parseInput('Water the plants');
 			expect(result.priority).toBe('medium');
+			expect(result.title).toBe('Water the plants');
 		});
 	});
 

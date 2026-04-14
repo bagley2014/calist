@@ -5,10 +5,10 @@ import type { ParsedQuickAdd, Priority } from '@shared/types';
 import { RRule } from 'rrule';
 
 const priorityPatterns: Array<{ priority: Priority; pattern: RegExp }> = [
-	{ priority: 'critical', pattern: /(?:\bcritical\b|!!!|!!\b)/i },
-	{ priority: 'high', pattern: /(?:\bhigh\b|!\b)/i },
-	{ priority: 'low', pattern: /\blow\b/i },
-	{ priority: 'medium', pattern: /\bmedium\b/i },
+	{ priority: 'critical', pattern: /(?:\bcritical\b(\s+priority)?|!!!|!!\b)/i },
+	{ priority: 'high', pattern: /(?:\bhigh\b(\s+priority)?|!\b)/i },
+	{ priority: 'low', pattern: /\blow\b(\s+priority)?/i },
+	{ priority: 'medium', pattern: /\bmedium\b(\s+priority)?/i },
 ];
 
 const dateIntentPattern =
