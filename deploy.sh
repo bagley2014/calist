@@ -168,7 +168,11 @@ else
     log_success "Bun already installed for $SERVICE_USER ($BUN_VERSION)"
 fi
 
-BUN_PATH=$(sudo -u "$SERVICE_USER" -H bash -lc 'export PATH="$HOME/.bun/bin:$PATH"; command -v bun')
+# Derive Bun path from the service user's home directory. Using a subshell
+# with -lc risks capturing profile/motd stdout which would corrupt the path.
+SERVICE_HOME=$(getent passwd "$SERVICE_USER" | cut -d: -f6)
+BUN_PATH="$SERVICE_HOME/.bun/bin/bun"
+[ -x "$BUN_PATH" ] || error_exit "Bun binary not found or not executable at $BUN_PATH"
 
 # Step 7: Install dependencies, build, and migrate
 log_info "Installing dependencies..."
@@ -201,10 +205,10 @@ fi
 cp "$DEPLOY_DIR/calist.service" /etc/systemd/system/$SERVICE_NAME.service
 
 # Update paths in the service file if they differ from defaults
-sed -i "s|WorkingDirectory=.*|WorkingDirectory=$DEPLOY_DIR|g" /etc/systemd/system/$SERVICE_NAME.service
-sed -i "s|ExecStart=.*|ExecStart=$BUN_PATH run src/server/index.ts|g" /etc/systemd/system/$SERVICE_NAME.service
-sed -i "s|User=.*|User=$SERVICE_USER|g" /etc/systemd/system/$SERVICE_NAME.service
-sed -i "s|Group=.*|Group=$SERVICE_GROUP|g" /etc/systemd/system/$SERVICE_NAME.service
+sed -i "s|WorkingDirectory=.*|WorkingDirectory=$DEPLOY_DIR|g" /etc/systemd/system/$SERVICE_NAME.service || error_exit "Failed to update WorkingDirectory in service file"
+sed -i "s|ExecStart=.*|ExecStart=$BUN_PATH run src/server/index.ts|g" /etc/systemd/system/$SERVICE_NAME.service || error_exit "Failed to update ExecStart in service file"
+sed -i "s|User=.*|User=$SERVICE_USER|g" /etc/systemd/system/$SERVICE_NAME.service || error_exit "Failed to update User in service file"
+sed -i "s|Group=.*|Group=$SERVICE_GROUP|g" /etc/systemd/system/$SERVICE_NAME.service || error_exit "Failed to update Group in service file"
 
 log_success "Systemd service file installed"
 
