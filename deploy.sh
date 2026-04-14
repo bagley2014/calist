@@ -16,6 +16,10 @@ SERVICE_NAME="calist"
 SERVICE_USER="calist"
 SERVICE_GROUP="calist"
 
+# Path for a persistent deploy error flag. If this file exists, the next run
+# will force a full deploy even when the repo is up-to-date.
+ERROR_FLAG="/var/tmp/calist_deploy_error"
+
 # Logging functions
 log_info() {
     echo -e "${BLUE}[INFO]${NC} $1"
@@ -34,10 +38,22 @@ log_error() {
 }
 
 # Error handler
+create_error_flag() {
+    mkdir -p "$(dirname "$ERROR_FLAG")" >/dev/null 2>&1 || true
+    touch "$ERROR_FLAG" >/dev/null 2>&1 || true
+}
+
 error_exit() {
+    create_error_flag
     log_error "$1"
     exit 1
 }
+
+# Ensure any unexpected error or interruption leaves the error flag so the
+# next run will force a deploy. Use lightweight trap handlers to avoid
+# recursion into `error_exit`.
+trap 'mkdir -p "$(dirname "$ERROR_FLAG")" >/dev/null 2>&1 || true; touch "$ERROR_FLAG" >/dev/null 2>&1 || true; log_error "Script aborted due to unexpected error"; exit 1' ERR
+trap 'mkdir -p "$(dirname "$ERROR_FLAG")" >/dev/null 2>&1 || true; touch "$ERROR_FLAG" >/dev/null 2>&1 || true; log_error "Script interrupted"; exit 1' INT TERM
 
 # Check if running as root
 if [[ $EUID -ne 0 ]]; then
@@ -61,6 +77,15 @@ else
     log_success "git already installed ($(git --version))"
 fi
 
+# If a previous run left an error flag, force a full deploy even when the
+# repository appears up-to-date.
+if [ -f "$ERROR_FLAG" ]; then
+    log_warn "Previous deploy had errors; forcing full deploy run"
+    FORCE_DEPLOY=true
+else
+    FORCE_DEPLOY=false
+fi
+
 # Step 2: Check for updates before doing anything disruptive
 log_info "Checking repository state in $DEPLOY_DIR..."
 
@@ -70,8 +95,12 @@ if [ -d "$DEPLOY_DIR/.git" ]; then
     LOCAL=$(git rev-parse HEAD)
     REMOTE=$(git rev-parse origin/master)
     if [ "$LOCAL" = "$REMOTE" ]; then
-        log_success "Already up to date. Nothing to deploy."
-        exit 0
+        if [ "$FORCE_DEPLOY" = true ]; then
+            log_warn "Previous deploy error present; proceeding with deploy despite no changes."
+        else
+            log_success "Already up to date. Nothing to deploy."
+            exit 0
+        fi
     fi
     log_info "Updates found ($LOCAL -> $REMOTE). Proceeding with deployment..."
     NEEDS_CLONE=false
@@ -195,6 +224,11 @@ systemctl start $SERVICE_NAME
 sleep 2
 if systemctl is-active --quiet $SERVICE_NAME; then
     log_success "$SERVICE_NAME service is running"
+    # Clear previous deploy error flag on successful run
+    if [ -f "$ERROR_FLAG" ]; then
+        rm -f "$ERROR_FLAG" >/dev/null 2>&1 || true
+        log_info "Removed deploy error flag"
+    fi
 else
     log_error "$SERVICE_NAME service failed to start. Check logs with: systemctl status $SERVICE_NAME"
     exit 1
