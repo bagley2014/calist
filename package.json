@@ -11,6 +11,8 @@
 		"build": "bunx vite build --config vite.config.ts",
 		"check": "bunx tsc --noEmit",
 		"migrate": "bun run src/server/db/migrate.ts",
+		"test": "bunx vitest run",
+		"test:watch": "bunx vitest",
 		"lint": "bunx prettier --check \"src/**/*.{js,ts,tsx,jsx,json,css,md}\"",
 		"format": "bunx prettier --write \"src/**/*.{js,ts,tsx,jsx,json,css,md}\""
 	},
@@ -36,6 +38,7 @@
 		"drizzle-kit": "^0.31.5",
 		"prettier": "^3.8.2",
 		"typescript": "^5.9.3",
-		"vite": "^7.1.12"
+		"vite": "^7.1.12",
+		"vitest": "^4.1.4"
 	}
 }
