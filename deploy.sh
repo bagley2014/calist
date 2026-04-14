@@ -46,7 +46,22 @@ fi
 
 log_info "Starting Calist deployment..."
 
-# Step 1: Check for updates before doing anything disruptive
+# Step 1: Ensure git is installed before any git command is used
+log_info "Checking for git installation..."
+if ! command -v git &>/dev/null; then
+    log_warn "git not found. Installing via apt-get..."
+    if command -v apt-get &>/dev/null; then
+        apt-get update
+        apt-get install -y git || error_exit "git installation failed"
+        log_success "git installed successfully"
+    else
+        error_exit "git not found and apt-get is unavailable"
+    fi
+else
+    log_success "git already installed ($(git --version))"
+fi
+
+# Step 2: Check for updates before doing anything disruptive
 log_info "Checking repository state in $DEPLOY_DIR..."
 
 if [ -d "$DEPLOY_DIR/.git" ]; then
@@ -65,7 +80,7 @@ else
     NEEDS_CLONE=true
 fi
 
-# Step 2: Stop existing service if running
+# Step 3: Stop existing service if running
 log_info "Checking for existing Calist service..."
 if systemctl is-active --quiet $SERVICE_NAME; then
     log_warn "Stopping existing $SERVICE_NAME service..."
@@ -75,7 +90,7 @@ else
     log_info "$SERVICE_NAME service is not running"
 fi
 
-# Step 3: Clone or pull repository
+# Step 4: Clone or pull repository
 log_info "Setting up repository in $DEPLOY_DIR..."
 
 if [ "$NEEDS_CLONE" = false ]; then
@@ -93,7 +108,7 @@ else
     log_success "Repository cloned"
 fi
 
-# Step 4: Create calist user and group if they don't exist
+# Step 5: Create calist user and group if they don't exist
 log_info "Checking for $SERVICE_USER user and group..."
 
 if ! id "$SERVICE_USER" &>/dev/null; then
@@ -110,7 +125,7 @@ chown -R "$SERVICE_USER:$SERVICE_GROUP" "$DEPLOY_DIR"
 chmod 755 "$DEPLOY_DIR"
 log_success "Permissions set"
 
-# Step 5: Install Bun if needed (as service user)
+# Step 6: Install Bun if needed (as service user)
 log_info "Checking for Bun installation for user $SERVICE_USER..."
 if ! sudo -u "$SERVICE_USER" -H bash -lc 'export PATH="$HOME/.bun/bin:$PATH"; command -v bun >/dev/null'; then
     log_warn "Bun not found for $SERVICE_USER. Installing Bun..."
@@ -126,7 +141,7 @@ fi
 
 BUN_PATH=$(sudo -u "$SERVICE_USER" -H bash -lc 'export PATH="$HOME/.bun/bin:$PATH"; command -v bun')
 
-# Step 6: Install dependencies, build, and migrate
+# Step 7: Install dependencies, build, and migrate
 log_info "Installing dependencies..."
 cd "$DEPLOY_DIR"
 sudo -u "$SERVICE_USER" -H bash -lc 'export PATH="$HOME/.bun/bin:$PATH"; bun install --frozen-lockfile' || error_exit "bun install failed"
@@ -146,7 +161,7 @@ log_info "Running database migrations..."
 sudo -u "$SERVICE_USER" -H bash -lc 'export PATH="$HOME/.bun/bin:$PATH"; bun run migrate' || error_exit "bun run migrate failed"
 log_success "Database migrations completed"
 
-# Step 7: Install systemd service
+# Step 8: Install systemd service
 log_info "Installing systemd service..."
 
 if [ ! -f "$DEPLOY_DIR/calist.service" ]; then
@@ -172,7 +187,7 @@ log_info "Enabling $SERVICE_NAME service..."
 systemctl enable $SERVICE_NAME
 log_success "$SERVICE_NAME service enabled"
 
-# Step 8: Start the service
+# Step 9: Start the service
 log_info "Starting $SERVICE_NAME service..."
 systemctl start $SERVICE_NAME
 
