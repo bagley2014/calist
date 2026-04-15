@@ -1,4 +1,4 @@
-import { dateToLocalDateKey, epochSecondsToDateKey, monthLabel, priorityClass } from '../lib/formatters';
+import { dateToLocalDateKey, epochSecondsToDateKey, getMonthLabel, priorityClass } from '../lib/formatters';
 
 import type { Item } from '@shared/types';
 
@@ -54,7 +54,7 @@ export function CalendarView({
 			<div className="section-head">
 				<div>
 					<span className="eyebrow">Calendar</span>
-					<h2>{monthLabel(month)}</h2>
+					<h2>{getMonthLabel(month)}</h2>
 				</div>
 				<div className="section-head__actions">
 					<button type="button" className="button button--ghost" onClick={onPrevMonth}>

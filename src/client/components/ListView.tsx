@@ -1,8 +1,8 @@
 import {
 	buildChipSummary,
 	epochSecondsToDateKey,
-	formatDayHeading,
-	formatWhenLabel,
+	getDayHeading,
+	getWhenLabel,
 	humanizeRRule,
 	priorityClass,
 } from '../lib/formatters';
@@ -101,7 +101,7 @@ export function ListView({
 
 			{[...groups.entries()].map(([dayKey, groupItems]) => (
 				<div className="list-group" key={dayKey}>
-					<h3>{formatDayHeading(groupItems[0].startsAt ?? 0)}</h3>
+					<h3>{getDayHeading(groupItems[0].startsAt ?? 0)}</h3>
 					{groupItems.map((item) => (
 						<article
 							key={item.id}
@@ -114,7 +114,7 @@ export function ListView({
 									{item.rrule ? <span className="item-card__repeat">Repeat</span> : null}
 								</div>
 								<p>
-									{formatWhenLabel(item.startsAt, item.isAllDay)} · {item.priority}
+									{getWhenLabel(item.startsAt, item.isAllDay)} · {item.priority}
 									{item.rrule ? ` · ${humanizeRRule(item.rrule)}` : ''}
 								</p>
 							</div>

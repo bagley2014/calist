@@ -12,9 +12,14 @@ import { RRule } from 'rrule';
 
 const dayFormatter = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
 
-const chipFormatter = new Intl.DateTimeFormat(undefined, {
+const fullChipFormatter = new Intl.DateTimeFormat(undefined, {
 	month: 'short',
 	day: 'numeric',
+	hour: 'numeric',
+	minute: '2-digit',
+});
+
+const shortChipFormatter = new Intl.DateTimeFormat(undefined, {
 	hour: 'numeric',
 	minute: '2-digit',
 });
@@ -31,7 +36,7 @@ export function priorityClass(priority: Priority) {
 	return `priority-${priority}`;
 }
 
-export function formatWhenLabel(startsAt: number | null, isAllDay: boolean) {
+export function getWhenLabel(startsAt: number | null, isAllDay: boolean) {
 	if (startsAt === null) {
 		return 'Undated';
 	}
@@ -41,10 +46,23 @@ export function formatWhenLabel(startsAt: number | null, isAllDay: boolean) {
 		return 'Undated';
 	}
 
-	return isAllDay ? allDayFormatter.format(date) : chipFormatter.format(date);
+	return isAllDay ? allDayFormatter.format(date) : fullChipFormatter.format(date);
 }
 
-export function formatDayHeading(timestamp: number) {
+export function getTimeLabel(startsAt: number | null, isAllDay: boolean) {
+	if (startsAt === null) {
+		return 'Undated';
+	}
+
+	const date = epochSecondsToDate(startsAt);
+	if (!date) {
+		return 'Undated';
+	}
+
+	return isAllDay ? 'All Day' : shortChipFormatter.format(date);
+}
+
+export function getDayHeading(timestamp: number) {
 	const date = epochSecondsToDate(timestamp);
 	if (!date) {
 		return 'Undated';
@@ -53,7 +71,7 @@ export function formatDayHeading(timestamp: number) {
 	return dayFormatter.format(date);
 }
 
-export function monthLabel(date: Date) {
+export function getMonthLabel(date: Date) {
 	return monthFormatter.format(date);
 }
 
@@ -64,14 +82,6 @@ export {
 	epochSecondsToTimeInputValue,
 	localDateTimeToEpochSeconds,
 };
-
-// Backward-compatible aliases while call sites migrate.
-export const priorityTone = priorityClass;
-export const formatWhen = formatWhenLabel;
-export const dayKeyFromTimestamp = epochSecondsToDateKey;
-export const toDateInputValue = epochSecondsToDateInputValue;
-export const toTimeInputValue = epochSecondsToTimeInputValue;
-export const combineLocalDateTime = localDateTimeToEpochSeconds;
 
 export function humanizeRRule(rrule: string | null) {
 	if (!rrule) {
@@ -88,7 +98,7 @@ export function humanizeRRule(rrule: string | null) {
 export function buildChipSummary(item: Pick<Item, 'title' | 'startsAt' | 'isAllDay' | 'priority' | 'rrule'>) {
 	const parts = [item.title];
 	if (item.startsAt !== null) {
-		parts.push(formatWhenLabel(item.startsAt, item.isAllDay));
+		parts.push(getWhenLabel(item.startsAt, item.isAllDay));
 	}
 	parts.push(priorityLabel(item.priority));
 	const recurrence = humanizeRRule(item.rrule);
