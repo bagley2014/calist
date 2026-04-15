@@ -65,12 +65,16 @@ export async function issueSession(reply: FastifyReply) {
 	const sessionSecret = await getRequiredConfigValue('sessionSecret');
 	const token = jwt.sign({ sub: 'calist-user' }, sessionSecret, { expiresIn: '30d' });
 
+	const hostHeader = (reply.request?.headers?.host as string | undefined) ?? undefined;
+	const domain = hostHeader ? hostHeader.split(':')[0] : undefined;
+
 	reply.setCookie(AUTH_COOKIE, token, {
 		httpOnly: true,
 		sameSite: 'strict',
 		secure: process.env.NODE_ENV === 'production',
 		path: '/',
 		maxAge: SESSION_MAX_AGE_SECONDS,
+		domain,
 	});
 }
 
