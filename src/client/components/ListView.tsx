@@ -1,10 +1,10 @@
 import {
 	buildChipSummary,
-	dayKeyFromTimestamp,
+	epochSecondsToDateKey,
 	formatDayHeading,
-	formatWhen,
+	formatWhenLabel,
 	humanizeRRule,
-	priorityTone,
+	priorityClass,
 } from '../lib/formatters';
 
 import type { Item } from '@shared/types';
@@ -33,7 +33,7 @@ export function ListView({
 			return false;
 		}
 
-		if (activeDay && dayKeyFromTimestamp(item.startsAt) !== activeDay) {
+		if (activeDay && epochSecondsToDateKey(item.startsAt) !== activeDay) {
 			return false;
 		}
 
@@ -43,7 +43,7 @@ export function ListView({
 	const undatedItems = visibleItems.filter((item) => item.startsAt === null);
 	const datedItems = visibleItems.filter((item) => item.startsAt !== null);
 	const groups = datedItems.reduce<Map<string, Item[]>>((map, item) => {
-		const key = dayKeyFromTimestamp(item.startsAt);
+		const key = epochSecondsToDateKey(item.startsAt);
 		const bucket = map.get(key) ?? [];
 		bucket.push(item);
 		map.set(key, bucket);
@@ -74,7 +74,7 @@ export function ListView({
 					{undatedItems.map((item) => (
 						<article
 							key={item.id}
-							className={`item-card ${priorityTone(item.priority)} ${item.completed ? 'item-card--completed' : ''}`}
+							className={`item-card ${priorityClass(item.priority)} ${item.completed ? 'item-card--completed' : ''}`}
 							onClick={() => onSelectItem(item.id)}
 						>
 							<div>
@@ -105,7 +105,7 @@ export function ListView({
 					{groupItems.map((item) => (
 						<article
 							key={item.id}
-							className={`item-card ${priorityTone(item.priority)} ${item.completed ? 'item-card--completed' : ''}`}
+							className={`item-card ${priorityClass(item.priority)} ${item.completed ? 'item-card--completed' : ''}`}
 							onClick={() => onSelectItem(item.id)}
 						>
 							<div>
@@ -114,7 +114,7 @@ export function ListView({
 									{item.rrule ? <span className="item-card__repeat">Repeat</span> : null}
 								</div>
 								<p>
-									{formatWhen(item.startsAt, item.isAllDay)} · {item.priority}
+									{formatWhenLabel(item.startsAt, item.isAllDay)} · {item.priority}
 									{item.rrule ? ` · ${humanizeRRule(item.rrule)}` : ''}
 								</p>
 							</div>

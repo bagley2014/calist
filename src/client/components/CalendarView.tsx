@@ -1,4 +1,4 @@
-import { dayKeyFromTimestamp, monthLabel, priorityTone } from '../lib/formatters';
+import { dateToLocalDateKey, epochSecondsToDateKey, monthLabel, priorityClass } from '../lib/formatters';
 
 import type { Item } from '@shared/types';
 
@@ -39,7 +39,7 @@ export function CalendarView({
 }: CalendarViewProps) {
 	const { days } = buildCalendarDays(month);
 	const itemMap = items.reduce<Map<string, Item[]>>((map, item) => {
-		const key = dayKeyFromTimestamp(item.startsAt);
+		const key = epochSecondsToDateKey(item.startsAt);
 		if (key === 'undated' || item.completed) {
 			return map;
 		}
@@ -78,7 +78,7 @@ export function CalendarView({
 			</div>
 			<div className="calendar-grid">
 				{days.map((day) => {
-					const key = day.toLocaleDateString('sv-SE');
+					const key = dateToLocalDateKey(day);
 					const dayItems = itemMap.get(key) ?? [];
 					const isCurrentMonth = day.getMonth() === month.getMonth();
 					return (
@@ -91,7 +91,7 @@ export function CalendarView({
 							<span className="calendar-day__date">{day.getDate()}</span>
 							<div className="calendar-day__chips">
 								{dayItems.slice(0, 3).map((item) => (
-									<span key={item.id} className={`calendar-chip ${priorityTone(item.priority)}`} title={item.title}>
+									<span key={item.id} className={`calendar-chip ${priorityClass(item.priority)}`} title={item.title}>
 										{item.title}
 									</span>
 								))}

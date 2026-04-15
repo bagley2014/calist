@@ -1,4 +1,12 @@
 import type { Item, Priority } from '@shared/types';
+import {
+	dateToLocalDateKey,
+	epochSecondsToDate,
+	epochSecondsToDateInputValue,
+	epochSecondsToDateKey,
+	epochSecondsToTimeInputValue,
+	localDateTimeToEpochSeconds,
+} from './date';
 
 import { RRule } from 'rrule';
 
@@ -19,58 +27,51 @@ export function priorityLabel(priority: Priority) {
 	return priority.charAt(0).toUpperCase() + priority.slice(1);
 }
 
-export function priorityTone(priority: Priority) {
+export function priorityClass(priority: Priority) {
 	return `priority-${priority}`;
 }
 
-export function formatWhen(startsAt: number | null, isAllDay: boolean) {
+export function formatWhenLabel(startsAt: number | null, isAllDay: boolean) {
 	if (startsAt === null) {
 		return 'Undated';
 	}
 
-	return isAllDay ? allDayFormatter.format(new Date(startsAt * 1000)) : chipFormatter.format(new Date(startsAt * 1000));
+	const date = epochSecondsToDate(startsAt);
+	if (!date) {
+		return 'Undated';
+	}
+
+	return isAllDay ? allDayFormatter.format(date) : chipFormatter.format(date);
 }
 
 export function formatDayHeading(timestamp: number) {
-	return dayFormatter.format(new Date(timestamp * 1000));
+	const date = epochSecondsToDate(timestamp);
+	if (!date) {
+		return 'Undated';
+	}
+
+	return dayFormatter.format(date);
 }
 
 export function monthLabel(date: Date) {
 	return monthFormatter.format(date);
 }
 
-export function dayKeyFromTimestamp(timestamp: number | null) {
-	if (timestamp === null) {
-		return 'undated';
-	}
+export {
+	dateToLocalDateKey,
+	epochSecondsToDateInputValue,
+	epochSecondsToDateKey,
+	epochSecondsToTimeInputValue,
+	localDateTimeToEpochSeconds,
+};
 
-	return new Date(timestamp * 1000).toLocaleDateString('sv-SE');
-}
-
-export function toDateInputValue(timestamp: number | null) {
-	if (timestamp === null) {
-		return '';
-	}
-
-	return new Date(timestamp * 1000).toLocaleDateString('sv-SE');
-}
-
-export function toTimeInputValue(timestamp: number | null) {
-	if (timestamp === null) {
-		return '';
-	}
-
-	return new Date(timestamp * 1000).toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
-}
-
-export function combineLocalDateTime(dateValue: string, timeValue: string, isAllDay: boolean, endOfDay = false) {
-	if (!dateValue) {
-		return null;
-	}
-
-	const time = isAllDay ? (endOfDay ? '23:59' : '00:00') : timeValue || (endOfDay ? '23:59' : '09:00');
-	return Math.floor(new Date(`${dateValue}T${time}:00`).getTime() / 1000);
-}
+// Backward-compatible aliases while call sites migrate.
+export const priorityTone = priorityClass;
+export const formatWhen = formatWhenLabel;
+export const dayKeyFromTimestamp = epochSecondsToDateKey;
+export const toDateInputValue = epochSecondsToDateInputValue;
+export const toTimeInputValue = epochSecondsToTimeInputValue;
+export const combineLocalDateTime = localDateTimeToEpochSeconds;
 
 export function humanizeRRule(rrule: string | null) {
 	if (!rrule) {
@@ -87,7 +88,7 @@ export function humanizeRRule(rrule: string | null) {
 export function buildChipSummary(item: Pick<Item, 'title' | 'startsAt' | 'isAllDay' | 'priority' | 'rrule'>) {
 	const parts = [item.title];
 	if (item.startsAt !== null) {
-		parts.push(formatWhen(item.startsAt, item.isAllDay));
+		parts.push(formatWhenLabel(item.startsAt, item.isAllDay));
 	}
 	parts.push(priorityLabel(item.priority));
 	const recurrence = humanizeRRule(item.rrule);

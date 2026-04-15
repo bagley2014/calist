@@ -1,5 +1,10 @@
 import type { Item, Priority } from '@shared/types';
-import { combineLocalDateTime, humanizeRRule, toDateInputValue, toTimeInputValue } from '../lib/formatters';
+import {
+	epochSecondsToDateInputValue,
+	epochSecondsToTimeInputValue,
+	humanizeRRule,
+	localDateTimeToEpochSeconds,
+} from '../lib/formatters';
 import { useEffect, useState } from 'react';
 
 interface DetailPanelProps {
@@ -38,10 +43,10 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 		setTitle(item.title);
 		setNotes(item.notes ?? '');
 		setPriority(item.priority);
-		setStartDate(toDateInputValue(item.startsAt));
-		setStartTime(toTimeInputValue(item.startsAt));
-		setEndDate(toDateInputValue(item.endsAt));
-		setEndTime(toTimeInputValue(item.endsAt));
+		setStartDate(epochSecondsToDateInputValue(item.startsAt));
+		setStartTime(epochSecondsToTimeInputValue(item.startsAt));
+		setEndDate(epochSecondsToDateInputValue(item.endsAt));
+		setEndTime(epochSecondsToTimeInputValue(item.endsAt));
 		setIsAllDay(item.isAllDay);
 		setRRule(item.rrule ?? '');
 		setError(null);
@@ -150,8 +155,8 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 								title: title.trim(),
 								notes: notes.trim() || null,
 								priority,
-								startsAt: combineLocalDateTime(startDate, startTime, isAllDay),
-								endsAt: combineLocalDateTime(endDate, endTime, isAllDay, true),
+								startsAt: localDateTimeToEpochSeconds(startDate, startTime, isAllDay),
+								endsAt: localDateTimeToEpochSeconds(endDate, endTime, isAllDay, true),
 								isAllDay,
 								rrule: normalizeRuleText(rrule) || null,
 							});
