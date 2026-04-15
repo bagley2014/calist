@@ -61,11 +61,11 @@ export function generateApiKey() {
 	return crypto.randomUUID().replaceAll('-', '');
 }
 
-export async function issueSession(reply: FastifyReply) {
+export async function issueSession(request: FastifyRequest, reply: FastifyReply) {
 	const sessionSecret = await getRequiredConfigValue('sessionSecret');
 	const token = jwt.sign({ sub: 'calist-user' }, sessionSecret, { expiresIn: '30d' });
 
-	const hostHeader = (reply.request?.headers?.host as string | undefined) ?? undefined;
+	const hostHeader = request.headers.host as string | undefined;
 	const domain = hostHeader ? hostHeader.split(':')[0] : undefined;
 
 	reply.setCookie(AUTH_COOKIE, token, {
