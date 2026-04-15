@@ -113,10 +113,7 @@ export function ListView({
 									<h4>{item.title}</h4>
 									{item.rrule ? <span className="item-card__repeat">Repeat</span> : null}
 								</div>
-								<p>
-									{getWhenLabel(item.startsAt, item.isAllDay)} · {item.priority}
-									{item.rrule ? ` · ${humanizeRRule(item.rrule)}` : ''}
-								</p>
+								<p>{buildChipSummary(item)}</p>
 							</div>
 						</article>
 					))}

@@ -1,4 +1,4 @@
-import { formatWhen, priorityLabel } from '../lib/formatters';
+import { getWhenLabel, priorityLabel } from '../lib/formatters';
 
 import type { ParsedQuickAdd } from '@shared/types';
 
@@ -10,12 +10,13 @@ interface ConfirmChipProps {
 }
 
 export function ConfirmChip({ parsed, onConfirm, onCancel, busy }: ConfirmChipProps) {
-	const summary = [
-		parsed.title,
-		parsed.startsAt !== null ? formatWhen(parsed.startsAt, parsed.isAllDay) : null,
-		priorityLabel(parsed.priority),
-		parsed.recurrenceText,
-	]
+	const timeSummary =
+		parsed.startsAt !== null
+			? parsed.endsAt !== null
+				? `${getWhenLabel(parsed.startsAt, parsed.isAllDay)} to ${getWhenLabel(parsed.endsAt, parsed.isAllDay)}`
+				: getWhenLabel(parsed.startsAt, parsed.isAllDay)
+			: null;
+	const summary = [parsed.title, timeSummary, priorityLabel(parsed.priority), parsed.recurrenceText]
 		.filter(Boolean)
 		.join(' · ');
 

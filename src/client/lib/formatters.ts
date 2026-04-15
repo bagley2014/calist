@@ -95,10 +95,25 @@ export function humanizeRRule(rrule: string | null) {
 	}
 }
 
-export function buildChipSummary(item: Pick<Item, 'title' | 'startsAt' | 'isAllDay' | 'priority' | 'rrule'>) {
-	const parts = [item.title];
+export function buildChipSummary(
+	item: Pick<Item, 'title' | 'startsAt' | 'isAllDay' | 'priority' | 'rrule' | 'endsAt'>
+) {
+	const parts = [];
 	if (item.startsAt !== null) {
-		parts.push(getWhenLabel(item.startsAt, item.isAllDay));
+		const startTime = getTimeLabel(item.startsAt, item.isAllDay);
+
+		if (item.endsAt !== null) {
+			// If the start and end are on the same day, just show the time range. Otherwise, show the end date as well.
+			const startDateKey = epochSecondsToDateKey(item.startsAt);
+			const endDateKey = epochSecondsToDateKey(item.endsAt);
+			const endTime =
+				startDateKey === endDateKey
+					? getTimeLabel(item.endsAt, item.isAllDay)
+					: getWhenLabel(item.endsAt, item.isAllDay);
+			parts.push(`${startTime} → ${endTime}`);
+		} else {
+			parts.push(startTime);
+		}
 	}
 	parts.push(priorityLabel(item.priority));
 	const recurrence = humanizeRRule(item.rrule);

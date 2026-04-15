@@ -46,6 +46,28 @@ describe('parseInput', () => {
 		});
 	});
 
+	describe('end date parsing', () => {
+		it('parses date ranges and sets endsAt', () => {
+			const result = parseInput('Conference from tomorrow to friday');
+			expect(result.startsAt).not.toBeNull();
+			expect(result.endsAt).not.toBeNull();
+			expect(result.endsAt).toBeGreaterThan(result.startsAt!);
+		});
+
+		it('sets endsAt to null when no end date is given', () => {
+			const result = parseInput('Doctor appointment monday 2pm');
+			expect(result.startsAt).not.toBeNull();
+			expect(result.endsAt).toBeNull();
+		});
+
+		it('sets end times for time ranges', () => {
+			const result = parseInput('Meeting tomorrow 3pm-4pm');
+			expect(result.startsAt).not.toBeNull();
+			expect(result.endsAt).not.toBeNull();
+			expect(result.endsAt).toBe(result.startsAt! + 3600);
+		});
+	});
+
 	describe('priority detection', () => {
 		it('detects "critical" priority keyword', () => {
 			const result = parseInput('Server is down critical');
