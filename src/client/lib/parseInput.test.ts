@@ -144,6 +144,34 @@ describe('parseInput', () => {
 			expect(result.startsAt).not.toBeNull();
 			expect(result.title).toBe('Stretch');
 		});
+
+		it('parses "daily at 3pm" with explicit time', () => {
+			const result = parseInput('Standup daily at 3pm');
+			expect(result.rrule).not.toBeNull();
+			expect(result.rrule).toContain('FREQ=DAILY');
+			expect(result.isAllDay).toBe(false);
+			expect(result.startsAt).not.toBeNull();
+			expect(result.title).toBe('Standup');
+		});
+
+		it('parses "every Monday 9am" as weekly with BYDAY and time', () => {
+			const result = parseInput('Team sync every Monday 9am');
+			expect(result.rrule).not.toBeNull();
+			expect(result.rrule).toContain('FREQ=WEEKLY');
+			expect(result.rrule).toContain('BYDAY=MO');
+			expect(result.isAllDay).toBe(false);
+			expect(result.startsAt).not.toBeNull();
+			expect(result.title).toBe('Team sync');
+		});
+
+		it('parses time before recurrence ("3pm daily")', () => {
+			const result = parseInput('Meeting 3pm daily');
+			expect(result.rrule).not.toBeNull();
+			expect(result.rrule).toContain('FREQ=DAILY');
+			expect(result.isAllDay).toBe(false);
+			expect(result.startsAt).not.toBeNull();
+			expect(result.title).toBe('Meeting');
+		});
 	});
 
 	describe('combined parsing', () => {
