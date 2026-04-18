@@ -118,18 +118,31 @@ describe('parseInput', () => {
 		it('parses "every week" as a weekly recurrence', () => {
 			const result = parseInput('Team sync every week');
 			expect(result.rrule).toContain('FREQ=WEEKLY');
+			expect(result.recurrenceText).not.toBeNull();
 			expect(result.title).toBe('Team sync');
 		});
 
 		it('parses "every month" as monthly recurrence', () => {
 			const result = parseInput('Pay rent every month');
 			expect(result.rrule).toContain('FREQ=MONTHLY');
+			expect(result.recurrenceText).not.toBeNull();
+			expect(result.title).toBe('Pay rent');
+		});
+
+		it('parses "every year" as a yearly recurrence', () => {
+			const result = parseInput('Birthday every year');
+			expect(result.rrule).toContain('FREQ=YEARLY');
+			expect(result.recurrenceText).not.toBeNull();
+			expect(result.title).toBe('Birthday');
+			expect(result.startsAt).not.toBeNull();
+			expect(result.isAllDay).toBe(true);
 		});
 
 		it('sets startsAt from recurrence when no explicit date is given', () => {
 			const result = parseInput('Stretch every day');
 			expect(result.rrule).toContain('FREQ=DAILY');
 			expect(result.startsAt).not.toBeNull();
+			expect(result.title).toBe('Stretch');
 		});
 	});
 
