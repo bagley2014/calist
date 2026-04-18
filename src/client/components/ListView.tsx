@@ -8,6 +8,9 @@ import {
 } from '../lib/formatters';
 
 import type { Item } from '@shared/types';
+import type { ItemOccurrence } from '../lib/recurrence';
+import { expandRecurringItems } from '../lib/recurrence';
+import { useMemo } from 'react';
 
 interface ListViewProps {
 	items: Item[];
@@ -28,24 +31,43 @@ export function ListView({
 	onSelectItem,
 	onToggleComplete,
 }: ListViewProps) {
-	const visibleItems = items.filter((item) => {
-		if (!showCompleted && item.completed) {
+	const occurrences = useMemo(() => {
+		const today = new Date();
+		let windowStart: Date;
+		let windowEnd: Date;
+
+		if (activeDay) {
+			const [year, month, day] = activeDay.split('-').map(Number);
+			windowStart = new Date(year, month - 1, day);
+			windowEnd = new Date(year, month - 1, day + 1);
+		} else {
+			windowStart = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+			windowEnd = new Date(today.getFullYear() + 2, today.getMonth(), today.getDate());
+		}
+
+		return expandRecurringItems(items, windowStart, windowEnd);
+	}, [items, activeDay]);
+
+	const visibleOccurrences = occurrences.filter((occ) => {
+		if (!showCompleted && occ.item.completed) {
 			return false;
 		}
 
-		if (activeDay && epochSecondsToDateKey(item.startsAt) !== activeDay) {
+		if (activeDay && epochSecondsToDateKey(occ.occurrenceStartsAt) !== activeDay) {
 			return false;
 		}
 
 		return true;
 	});
 
-	const undatedItems = visibleItems.filter((item) => item.startsAt === null);
-	const datedItems = visibleItems.filter((item) => item.startsAt !== null);
-	const groups = datedItems.reduce<Map<string, Item[]>>((map, item) => {
-		const key = epochSecondsToDateKey(item.startsAt);
+	const undatedItems = visibleOccurrences.filter((occ) => occ.occurrenceStartsAt === null);
+	const datedItems = visibleOccurrences
+		.filter((occ) => occ.occurrenceStartsAt !== null)
+		.sort((a, b) => (a.occurrenceStartsAt ?? 0) - (b.occurrenceStartsAt ?? 0));
+	const groups = datedItems.reduce<Map<string, ItemOccurrence[]>>((map, occ) => {
+		const key = epochSecondsToDateKey(occ.occurrenceStartsAt);
 		const bucket = map.get(key) ?? [];
-		bucket.push(item);
+		bucket.push(occ);
 		map.set(key, bucket);
 		return map;
 	}, new Map());
@@ -71,56 +93,56 @@ export function ListView({
 			{undatedItems.length > 0 ? (
 				<div className="list-group">
 					<h3>To-Do</h3>
-					{undatedItems.map((item) => (
+					{undatedItems.map((occ) => (
 						<article
-							key={item.id}
-							className={`item-card ${priorityClass(item.priority)} ${item.completed ? 'item-card--completed' : ''}`}
-							onClick={() => onSelectItem(item.id)}
+							key={`${occ.item.id}-undated`}
+							className={`item-card ${priorityClass(occ.item.priority)} ${occ.item.completed ? 'item-card--completed' : ''}`}
+							onClick={() => onSelectItem(occ.item.id)}
 						>
 							<div>
 								<div className="item-card__title-row">
-									<h4>{item.title}</h4>
-									{item.rrule ? <span className="item-card__repeat">Repeat</span> : null}
+									<h4>{occ.item.title}</h4>
+									{occ.item.rrule ? <span className="item-card__repeat">Repeat</span> : null}
 								</div>
-								<p>{buildChipSummary(item)}</p>
+								<p>{buildChipSummary(occ.item)}</p>
 							</div>
 							<button
 								type="button"
 								className="button button--ghost"
 								onClick={(event) => {
 									event.stopPropagation();
-									onToggleComplete(item, !item.completed);
+									onToggleComplete(occ.item, !occ.item.completed);
 								}}
 							>
-								{item.completed ? 'Undo' : 'Done'}
+								{occ.item.completed ? 'Undo' : 'Done'}
 							</button>
 						</article>
 					))}
 				</div>
 			) : null}
 
-			{[...groups.entries()].map(([dayKey, groupItems]) => (
+			{[...groups.entries()].map(([dayKey, groupOccs]) => (
 				<div className="list-group" key={dayKey}>
-					<h3>{getDayHeading(groupItems[0].startsAt ?? 0)}</h3>
-					{groupItems.map((item) => (
+					<h3>{getDayHeading(groupOccs[0].occurrenceStartsAt ?? 0)}</h3>
+					{groupOccs.map((occ) => (
 						<article
-							key={item.id}
-							className={`item-card ${priorityClass(item.priority)} ${item.completed ? 'item-card--completed' : ''}`}
-							onClick={() => onSelectItem(item.id)}
+							key={`${occ.item.id}-${occ.occurrenceStartsAt}`}
+							className={`item-card ${priorityClass(occ.item.priority)} ${occ.item.completed ? 'item-card--completed' : ''}`}
+							onClick={() => onSelectItem(occ.item.id)}
 						>
 							<div>
 								<div className="item-card__title-row">
-									<h4>{item.title}</h4>
-									{item.rrule ? <span className="item-card__repeat">Repeat</span> : null}
+									<h4>{occ.item.title}</h4>
+									{occ.item.rrule ? <span className="item-card__repeat">Repeat</span> : null}
 								</div>
-								<p>{buildChipSummary(item)}</p>
+								<p>{buildChipSummary(occ.item)}</p>
 							</div>
 						</article>
 					))}
 				</div>
 			))}
 
-			{visibleItems.length === 0 ? <div className="empty-state">No items match the current filter.</div> : null}
+			{visibleOccurrences.length === 0 ? <div className="empty-state">No items match the current filter.</div> : null}
 		</section>
 	);
 }

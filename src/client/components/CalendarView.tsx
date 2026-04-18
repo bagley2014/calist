@@ -1,6 +1,8 @@
 import { dateToLocalDateKey, epochSecondsToDateKey, getMonthLabel, priorityClass } from '../lib/formatters';
 
 import type { Item } from '@shared/types';
+import type { ItemOccurrence } from '../lib/recurrence';
+import { expandRecurringItems } from '../lib/recurrence';
 
 interface CalendarViewProps {
 	items: Item[];
@@ -38,13 +40,14 @@ export function CalendarView({
 	onSelectDay,
 }: CalendarViewProps) {
 	const { days } = buildCalendarDays(month);
-	const itemMap = items.reduce<Map<string, Item[]>>((map, item) => {
-		const key = epochSecondsToDateKey(item.startsAt);
-		if (key === 'undated' || item.completed) {
+	const occurrences = expandRecurringItems(items, days[0], days[days.length - 1]);
+	const itemMap = occurrences.reduce<Map<string, ItemOccurrence[]>>((map, occ) => {
+		const key = epochSecondsToDateKey(occ.occurrenceStartsAt);
+		if (key === 'undated' || occ.item.completed) {
 			return map;
 		}
 		const bucket = map.get(key) ?? [];
-		bucket.push(item);
+		bucket.push(occ);
 		map.set(key, bucket);
 		return map;
 	}, new Map());
@@ -90,9 +93,13 @@ export function CalendarView({
 						>
 							<span className="calendar-day__date">{day.getDate()}</span>
 							<div className="calendar-day__chips">
-								{dayItems.slice(0, 3).map((item) => (
-									<span key={item.id} className={`calendar-chip ${priorityClass(item.priority)}`} title={item.title}>
-										{item.title}
+								{dayItems.slice(0, 3).map((occ) => (
+									<span
+										key={`${occ.item.id}-${occ.occurrenceStartsAt}`}
+										className={`calendar-chip ${priorityClass(occ.item.priority)}`}
+										title={occ.item.title}
+									>
+										{occ.item.title}
 									</span>
 								))}
 								{dayItems.length > 3 ? (
