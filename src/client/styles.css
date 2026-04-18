@@ -467,6 +467,59 @@ textarea {
 	}
 }
 
+/* Toast styles */
+.toast {
+	position: fixed;
+	left: 100%;
+	transform: translateX(-100%) translateY(12px);
+	bottom: 16px;
+	z-index: 60;
+	background: var(--bg-panel);
+	color: var(--ink);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+	border-radius: 8px;
+	overflow: hidden;
+	min-width: 300px;
+	max-width: 90%;
+	opacity: 0;
+	transition: opacity 200ms ease, transform 200ms ease;
+	pointer-events: auto;
+}
+.toast--visible {
+	opacity: 1;
+	transform: translateX(-100%) translateY(0);
+}
+.toast__body {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 10px 12px;
+}
+.toast__text {
+	flex: 1;
+}
+.toast__dismiss {
+	margin-left: 12px;
+}
+.toast__progress {
+	height: 4px;
+	background: linear-gradient(90deg, var(--accent), rgba(255,255,255,0.06));
+	transform-origin: left;
+	animation-name: toastProgress;
+	animation-timing-function: linear;
+	animation-fill-mode: forwards;
+	animation-duration: 4000ms; /* overridden inline via style prop */
+}
+@keyframes toastProgress {
+	from {
+		transform: scaleX(1);
+	}
+	to {
+		transform: scaleX(0);
+	}
+}
+
 @media (max-width: 720px) {
 	.app-shell,
 	.auth-shell {

@@ -5,6 +5,7 @@ import { CalendarView } from './components/CalendarView';
 import { DetailPanel } from './components/DetailPanel';
 import { ListView } from './components/ListView';
 import { QuickAdd } from './components/QuickAdd';
+import { Toast } from './components/Toast';
 
 type ScreenState = 'loading' | 'setup' | 'login' | 'ready';
 type ViewState = 'list' | 'calendar';
@@ -338,14 +339,7 @@ export default function App() {
 					You are offline. The app shell stays available, but live API data needs a connection.
 				</div>
 			) : null}
-			{notice ? (
-				<div className="inline-message">
-					<span>{notice}</span>
-					<button type="button" className="button button--ghost" onClick={() => setNotice(null)}>
-						Dismiss
-					</button>
-				</div>
-			) : null}
+			{notice ? <Toast message={notice} duration={3000} onDismiss={() => setNotice(null)} /> : null}
 
 			{settingsOpen ? (
 				<div className="modal-backdrop" role="presentation" onClick={() => setSettingsOpen(false)}>
