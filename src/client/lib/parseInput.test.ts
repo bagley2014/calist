@@ -290,7 +290,7 @@ describe('parseInput', () => {
 		});
 
 		it('throws for ambiguous date + recurrence anchors', () => {
-			expect(() => parseInput('Team sync every Monday tomorrow')).toThrow();
+			expect(() => parseInput('Team sync every Monday 4/19/26')).toThrow();
 		});
 	});
 

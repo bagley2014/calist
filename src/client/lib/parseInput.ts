@@ -81,13 +81,17 @@ export function parseInput(input: string): ParsedQuickAdd {
 						?.replace(/^RRULE:/, '') ?? null;
 				recurrenceText = RRule.fromString(recurrenceRule ?? rule.toString()).toText();
 
-				if (startsAt === null) {
-					const firstOccurrence = rule.after(new Date(Date.now() - 1000), true);
-					if (firstOccurrence) {
-						// If no explicit start date, use the first recurrence date.
+				const firstOccurrence = rule.after(new Date(Date.now() - 1000), true);
+				if (firstOccurrence) {
+					// If no explicit start date, use the first recurrence date.
+					if (!startsAt) {
 						startsAt = Math.floor(firstOccurrence.getTime() / 1000);
-						// If recurrence text contains no time, treat as all-day.
 						isAllDay = !/\b\d{1,2}(:\d{2})?\s?(am|pm)\b/i.test(recurrenceSource);
+					}
+					// If the first occurrence doesn't match the parsed start date, throw an error to avoid confusion.
+					else if (Math.abs(firstOccurrence.getTime() / 1000 - startsAt) > 60) {
+						startsAt = null;
+						throw new Error('The recurrence pattern you entered conflicts with the date you entered.');
 					}
 				}
 			}
@@ -98,7 +102,7 @@ export function parseInput(input: string): ParsedQuickAdd {
 		}
 	}
 
-	if (!dateResult && !recurrenceRule) {
+	if (!startsAt && !recurrenceRule) {
 		throwIfDateLanguageIsInInput(trimmed);
 	}
 
