@@ -271,6 +271,27 @@ describe('parseInput', () => {
 			expect(result.rrule).toContain('FREQ=WEEKLY');
 			expect(result.startsAt).not.toBeNull();
 		});
+
+		it('parses recurrence with priority when no explicit date is given', () => {
+			const result = parseInput('Standup every day high priority');
+			expect(result.rrule).not.toBeNull();
+			expect(result.rrule).toContain('FREQ=DAILY');
+			expect(result.priority).toBe('high');
+			expect(result.title).toBe('Standup');
+			expect(result.startsAt).not.toBeNull();
+		});
+
+		it('parses recurrence with explicit date and priority', () => {
+			const result = parseInput('Team sync every week tomorrow critical');
+			expect(result.rrule).toContain('FREQ=WEEKLY');
+			expect(result.priority).toBe('critical');
+			expect(result.startsAt).not.toBeNull();
+			expect(result.title).toBe('Team sync');
+		});
+
+		it('throws for ambiguous date + recurrence anchors', () => {
+			expect(() => parseInput('Team sync every Monday tomorrow')).toThrow();
+		});
 	});
 
 	describe('output shape', () => {
