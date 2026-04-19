@@ -38,7 +38,7 @@ export async function registerAuthRoutes(app: FastifyInstance) {
 		await setConfigValue('icsApiKey', generateApiKey());
 		await setConfigValue('lookbackDays', '30');
 
-		await issueSession(reply);
+		await issueSession(request, reply);
 		return reply.send({ ok: true });
 	});
 
@@ -55,7 +55,7 @@ export async function registerAuthRoutes(app: FastifyInstance) {
 			return reply.status(401).send({ error: 'Incorrect password.' });
 		}
 
-		await issueSession(reply);
+		await issueSession(request, reply);
 		return reply.send({ ok: true });
 	});
 

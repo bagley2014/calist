@@ -61,9 +61,12 @@ export function generateApiKey() {
 	return crypto.randomUUID().replaceAll('-', '');
 }
 
-export async function issueSession(reply: FastifyReply) {
+export async function issueSession(request: FastifyRequest, reply: FastifyReply) {
 	const sessionSecret = await getRequiredConfigValue('sessionSecret');
 	const token = jwt.sign({ sub: 'calist-user' }, sessionSecret, { expiresIn: '30d' });
+
+	const hostHeader = request.headers.host as string | undefined;
+	const domain = hostHeader ? hostHeader.split(':')[0] : undefined;
 
 	reply.setCookie(AUTH_COOKIE, token, {
 		httpOnly: true,
@@ -71,6 +74,7 @@ export async function issueSession(reply: FastifyReply) {
 		secure: process.env.NODE_ENV === 'production',
 		path: '/',
 		maxAge: SESSION_MAX_AGE_SECONDS,
+		domain,
 	});
 }
 
