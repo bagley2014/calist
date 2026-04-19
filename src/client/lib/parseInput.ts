@@ -21,6 +21,13 @@ const priorityPatterns: Array<{ priority: Priority; pattern: RegExp }> = [
 
 const recurrencePattern = /\b(every\s+.+|daily|weekly|monthly|yearly)\b/i;
 
+const recurrenceReplacements = [
+	{ find: 'daily', replace: 'every day' },
+	{ find: 'weekly', replace: 'every week' },
+	{ find: 'monthly', replace: 'every month' },
+	{ find: 'yearly', replace: 'every year' },
+];
+
 export function parseInput(input: string): ParsedQuickAdd {
 	const trimmed = input.trim();
 	if (!trimmed) {
@@ -45,7 +52,11 @@ export function parseInput(input: string): ParsedQuickAdd {
 	let recurrenceText: string | null = null;
 
 	if (recurrenceMatch) {
-		const recurrenceSource = recurrenceMatch[0].trim();
+		let recurrenceSource = recurrenceMatch[0].trim();
+
+		for (const { find, replace } of recurrenceReplacements) {
+			recurrenceSource = recurrenceSource.replace(new RegExp(`\\b${find}\\b`, 'i'), replace);
+		}
 
 		try {
 			const options = RRule.parseText(recurrenceSource);
