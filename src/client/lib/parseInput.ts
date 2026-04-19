@@ -68,11 +68,11 @@ export function parseInput(input: string): ParsedQuickAdd {
 	}
 
 	let title = trimmed;
-	if (dateResult) {
-		title = title.replace(dateResult.text, ' ');
-	}
 	if (recurrenceMatch) {
 		title = title.replace(recurrenceMatch[0], ' ');
+	}
+	if (dateResult) {
+		title = title.replace(dateResult.text, ' ');
 	}
 	for (const { pattern } of priorityPatterns) {
 		title = title.replace(pattern, ' ');
