@@ -26,6 +26,16 @@ const recurrenceReplacements = [
 	{ find: 'weekly', replace: 'every week' },
 	{ find: 'monthly', replace: 'every month' },
 	{ find: 'yearly', replace: 'every year' },
+	{ find: 'other', replace: '2' },
+	{ find: 'two', replace: '2' },
+	{ find: 'three', replace: '3' },
+	{ find: 'four', replace: '4' },
+	{ find: 'five', replace: '5' },
+	{ find: 'six', replace: '6' },
+	{ find: 'seven', replace: '7' },
+	{ find: 'eight', replace: '8' },
+	{ find: 'nine', replace: '9' },
+	{ find: 'ten', replace: '10' },
 ];
 
 export function parseInput(input: string): ParsedQuickAdd {

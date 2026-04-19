@@ -172,6 +172,61 @@ describe('parseInput', () => {
 			expect(result.startsAt).not.toBeNull();
 			expect(result.title).toBe('Meeting');
 		});
+
+		it('parses "every 2 weeks" as a biweekly recurrence', () => {
+			const result = parseInput('Yoga class every 2 weeks');
+			expect(result.rrule).not.toBeNull();
+			expect(result.rrule).toContain('FREQ=WEEKLY');
+			expect(result.rrule).toContain('INTERVAL=2');
+			expect(result.recurrenceText).toBe('every 2 weeks');
+			expect(result.title).toBe('Yoga class');
+		});
+
+		it('parses "every other week" as a biweekly recurrence', () => {
+			const result = parseInput('Yoga class every other week');
+			expect(result.rrule).not.toBeNull();
+			expect(result.rrule).toContain('FREQ=WEEKLY');
+			expect(result.rrule).toContain('INTERVAL=2');
+			expect(result.recurrenceText).toBe('every 2 weeks');
+			expect(result.title).toBe('Yoga class');
+		});
+
+		it('parses "every other Tuesday" as a biweekly recurrence on Tuesdays', () => {
+			const result = parseInput('Yoga class every other Tuesday');
+			expect(result.rrule).not.toBeNull();
+			expect(result.rrule).toContain('FREQ=WEEKLY');
+			expect(result.rrule).toContain('INTERVAL=2');
+			expect(result.rrule).toContain('BYDAY=TU');
+			expect(result.recurrenceText).toBe('every 2 weeks on Tuesday');
+			expect(result.title).toBe('Yoga class');
+		});
+
+		it('parses "every three months" as a quarterly recurrence', () => {
+			const result = parseInput('Pay quarterly taxes every three months');
+			expect(result.rrule).not.toBeNull();
+			expect(result.rrule).toContain('FREQ=MONTHLY');
+			expect(result.rrule).toContain('INTERVAL=3');
+			expect(result.recurrenceText).toBe('every 3 months');
+			expect(result.title).toBe('Pay quarterly taxes');
+		});
+
+		it('parses "every other month" as a bi-monthly recurrence', () => {
+			const result = parseInput('Pay rent every other month');
+			expect(result.rrule).not.toBeNull();
+			expect(result.rrule).toContain('FREQ=MONTHLY');
+			expect(result.rrule).toContain('INTERVAL=2');
+			expect(result.recurrenceText).toBe('every 2 months');
+			expect(result.title).toBe('Pay rent');
+		});
+
+		it('parses "every weekday" as a weekly recurrence on weekdays', () => {
+			const result = parseInput('Check emails every weekday');
+			expect(result.rrule).not.toBeNull();
+			expect(result.rrule).toContain('FREQ=WEEKLY');
+			expect(result.rrule).toContain('BYDAY=MO,TU,WE,TH,FR');
+			expect(result.recurrenceText).toBe('every weekday');
+			expect(result.title).toBe('Check emails');
+		});
 	});
 
 	describe('combined parsing', () => {
