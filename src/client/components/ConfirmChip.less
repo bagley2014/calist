@@ -1,0 +1,17 @@
+@import '../shared.less';
+
+.confirm-chip {
+	.glass-panel();
+	.card-radius();
+	.flex-row();
+	.chip-layout();
+
+	@media (max-width: 960px) {
+		flex-direction: column;
+	}
+}
+
+.confirm-chip__actions {
+	display: flex;
+	gap: 0.6rem;
+}

@@ -1,0 +1,72 @@
+@import '../shared.less';
+
+.quick-add {
+	margin-bottom: 1.5rem;
+	position: relative;
+}
+
+.quick-add__bar {
+	.glass-panel();
+	.card-radius();
+	padding: 1.2rem;
+	display: grid;
+	gap: 1rem;
+}
+
+.quick-add__lead {
+	display: grid;
+	gap: 0.35rem;
+
+	p {
+		.muted-text();
+	}
+}
+
+.quick-add__badge {
+	.eyebrow();
+}
+
+.quick-add__input-row {
+	.flex-row();
+	align-items: center;
+
+	@media (max-width: 960px) {
+		flex-direction: column;
+	}
+}
+
+.quick-add__fab {
+	display: none;
+	position: fixed;
+	right: 1.5rem;
+	bottom: 1.5rem;
+	width: 72px;
+	height: 72px;
+	border-radius: 999px;
+	border: 0;
+	background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+	color: white;
+	font-weight: 800;
+	box-shadow: var(--shadow);
+}
+
+@media (max-width: 720px) {
+	.quick-add__bar {
+		display: none;
+	}
+
+	.quick-add--open {
+		.quick-add__bar {
+			display: grid;
+			position: fixed;
+			inset: auto 1rem 6.5rem 1rem;
+			z-index: 10;
+		}
+	}
+
+	.quick-add__fab {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+}

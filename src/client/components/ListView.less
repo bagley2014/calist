@@ -1,0 +1,63 @@
+@import '../shared.less';
+
+.list-group {
+	.glass-panel();
+	.panel-radius();
+	padding: 1.2rem;
+	display: grid;
+	gap: 0.75rem;
+
+	h3 {
+		margin: 0;
+	}
+}
+
+.item-card {
+	.glass-panel();
+	.card-radius();
+	.flex-row();
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem;
+	border-left: 6px solid transparent;
+
+	h4 {
+		margin: 0 0 0.2rem;
+	}
+
+	p {
+		.muted-text();
+	}
+
+	@media (max-width: 960px) {
+		flex-direction: column;
+	}
+}
+
+.item-card__title-row {
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
+}
+
+.item-card__repeat {
+	padding: 0.2rem 0.55rem;
+	border-radius: 999px;
+	background: rgba(95, 125, 255, 0.2);
+	font-size: 0.75rem;
+}
+
+.item-card--completed {
+	opacity: 0.68;
+
+	h4,
+	p {
+		text-decoration: line-through;
+	}
+}
+
+.empty-state {
+	.glass-panel();
+	.panel-radius();
+	padding: 1.2rem;
+}
