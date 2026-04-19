@@ -1,3 +1,5 @@
+import './DetailPanel.less';
+
 import type { Item, Priority } from '@shared/types';
 import {
 	epochSecondsToDateInputValue,

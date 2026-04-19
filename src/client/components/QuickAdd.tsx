@@ -1,3 +1,5 @@
+import './QuickAdd.less';
+
 import { useRef, useState } from 'react';
 
 import { ConfirmChip } from './ConfirmChip';

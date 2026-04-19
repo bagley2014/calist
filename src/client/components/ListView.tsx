@@ -1,3 +1,5 @@
+import './ListView.less';
+
 import {
 	buildChipSummary,
 	epochSecondsToDateKey,

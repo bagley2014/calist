@@ -1,3 +1,5 @@
+import './ConfirmChip.less';
+
 import { getWhenLabel, priorityLabel } from '../lib/formatters';
 
 import type { ParsedQuickAdd } from '@shared/types';

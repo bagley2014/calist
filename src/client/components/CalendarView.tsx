@@ -1,3 +1,5 @@
+import './CalendarView.less';
+
 import { dateToLocalDateKey, epochSecondsToDateKey, getMonthLabel, priorityClass } from '../lib/formatters';
 
 import type { Item } from '@shared/types';

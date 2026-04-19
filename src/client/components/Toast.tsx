@@ -1,3 +1,5 @@
+import './Toast.less';
+
 import { useEffect, useRef, useState } from 'react';
 
 interface ToastProps {

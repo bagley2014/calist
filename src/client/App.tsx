@@ -1,3 +1,5 @@
+import './App.less';
+
 import type { Item, ParsedQuickAdd, SchedulerSettings } from '@shared/types';
 import { useEffect, useState } from 'react';
 
