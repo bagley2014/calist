@@ -1,4 +1,4 @@
-import './styles.css';
+import './styles.less';
 
 import App from './App';
 import { StrictMode } from 'react';
