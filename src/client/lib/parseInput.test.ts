@@ -138,6 +138,34 @@ describe('parseInput', () => {
 			expect(result.isAllDay).toBe(true);
 		});
 
+		it('parses "every Monday" as a weekly recurrence with BYDAY', () => {
+			const result = parseInput('Standup every Monday');
+			expect(result.rrule).not.toBeNull();
+			expect(result.rrule).toContain('FREQ=WEEKLY');
+			expect(result.rrule).toContain('BYDAY=MO');
+			expect(result.startsAt).not.toBeNull();
+			expect(result.isAllDay).toBe(true);
+			expect(result.title).toBe('Standup');
+		});
+
+		it('parses "every weekday" as weekdays (Mon-Fri)', () => {
+			const result = parseInput('Office hours every weekday');
+			expect(result.rrule).not.toBeNull();
+			expect(result.rrule).toContain('FREQ=WEEKLY');
+			// Expect BYDAY to include Monday and Friday at minimum
+			expect(result.rrule).toMatch(/BYDAY=.*MO.*FR|BYDAY=.*MO,.*FR/);
+			expect(result.title).toBe('Office hours');
+		});
+
+		it('parses multiple weekdays ("Monday and Thursday")', () => {
+			const result = parseInput('Gym every Monday and Thursday');
+			expect(result.rrule).not.toBeNull();
+			expect(result.rrule).toContain('FREQ=WEEKLY');
+			// BYDAY may list days in a comma-separated list
+			expect(result.rrule).toMatch(/BYDAY=.*MO.*TH|BYDAY=.*MO,.*TH/);
+			expect(result.title).toBe('Gym');
+		});
+
 		it('sets startsAt from recurrence when no explicit date is given', () => {
 			const result = parseInput('Stretch every day');
 			expect(result.rrule).toContain('FREQ=DAILY');
