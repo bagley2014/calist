@@ -13,8 +13,8 @@
 		"migrate": "bun run src/server/db/migrate.ts",
 		"test": "bunx vitest run",
 		"test:watch": "bunx vitest",
-		"lint": "bunx prettier --check \"src/**/*.{js,ts,tsx,jsx,json,css,md}\"",
-		"format": "bunx prettier --write \"src/**/*.{js,ts,tsx,jsx,json,css,md}\""
+		"lint": "bunx prettier --check \"src/**/*.{js,ts,tsx,jsx,json,css,less,md}\"",
+		"format": "bunx prettier --write \"src/**/*.{js,ts,tsx,jsx,json,css,less,md}\""
 	},
 	"dependencies": {
 		"@fastify/cookie": "^11.0.2",
@@ -36,6 +36,7 @@
 		"bun-types": "^1.3.10",
 		"concurrently": "^9.2.1",
 		"drizzle-kit": "^0.31.5",
+		"less": "^4.6.4",
 		"prettier": "^3.8.2",
 		"typescript": "^5.9.3",
 		"vite": "^7.1.12",
