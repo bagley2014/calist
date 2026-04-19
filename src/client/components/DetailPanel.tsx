@@ -32,6 +32,7 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 	const [endTime, setEndTime] = useState('');
 	const [isAllDay, setIsAllDay] = useState(false);
 	const [rrule, setRRule] = useState('');
+	const [showRRuleEditor, setShowRRuleEditor] = useState(false);
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -132,14 +133,24 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 
 				<label>
 					Recurrence rule
-					<textarea
-						rows={3}
-						value={rrule}
-						onChange={(event) => setRRule(event.target.value)}
-						placeholder="FREQ=WEEKLY;BYDAY=MO"
-					/>
+					<button
+						type="button"
+						className="detail-panel__edit-toggle"
+						aria-expanded={showRRuleEditor}
+						onClick={() => setShowRRuleEditor((v) => !v)}
+					>
+						{showRRuleEditor ? 'done' : 'edit'}
+					</button>
+					{rrule ? <p className="detail-panel__hint">{humanizeRRule(normalizeRuleText(rrule))}</p> : null}
+					{showRRuleEditor ? (
+						<textarea
+							rows={3}
+							value={rrule}
+							onChange={(event) => setRRule(event.target.value)}
+							placeholder="FREQ=WEEKLY;BYDAY=MO"
+						/>
+					) : null}
 				</label>
-				{rrule ? <p className="detail-panel__hint">{humanizeRRule(normalizeRuleText(rrule))}</p> : null}
 
 				{error ? <p className="inline-message inline-message--error">{error}</p> : null}
 			</div>
