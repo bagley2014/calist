@@ -64,6 +64,10 @@ export function ListView({
 		map.set(key, bucket);
 		return map;
 	}, new Map());
+	const entries = [...groups.entries()];
+	if (undatedItems.length > 0) {
+		entries.unshift(['To-Do', undatedItems]);
+	}
 
 	return (
 		<section className={styles.stack}>
@@ -83,45 +87,10 @@ export function ListView({
 				</div>
 			</div>
 
-			{undatedItems.length > 0 ? (
-				<div className={styles.group}>
-					<h3>To-Do</h3>
-					{undatedItems.map((occ) => (
-						<article
-							key={`${occ.item.id}-undated`}
-							className={cn(
-								styles.card,
-								styles[priorityClass(occ.item.priority)],
-								occ.item.completed && styles.completed
-							)}
-							onClick={() => onSelectItem(occ.item.id)}
-						>
-							<div>
-								<div className={styles.titleRow}>
-									<h4>{occ.item.title}</h4>
-									{occ.item.rrule ? <span className={styles.repeat}>Repeat</span> : null}
-								</div>
-								<p>{buildChipSummary(occ.item)}</p>
-							</div>
-							<button
-								type="button"
-								className={cn(styles.button, styles.ghost)}
-								onClick={(event) => {
-									event.stopPropagation();
-									onToggleComplete(occ.item, !occ.item.completed);
-								}}
-							>
-								{occ.item.completed ? 'Undo' : 'Done'}
-							</button>
-						</article>
-					))}
-				</div>
-			) : null}
-
-			{[...groups.entries()].map(([dayKey, groupOccs]) => (
+			{entries.map(([dayKey, groupOccurrences]) => (
 				<div className={styles.group} key={dayKey}>
-					<h3>{getDayHeading(groupOccs[0].occurrenceStartsAt ?? 0)}</h3>
-					{groupOccs.map((occ) => (
+					<h3>{dayKey === 'To-Do' ? dayKey : getDayHeading(groupOccurrences[0].occurrenceStartsAt!)}</h3>
+					{groupOccurrences.map((occ) => (
 						<article
 							key={`${occ.item.id}-${occ.occurrenceStartsAt}`}
 							className={cn(
@@ -138,6 +107,18 @@ export function ListView({
 								</div>
 								<p>{buildChipSummary(occ.item)}</p>
 							</div>
+							{dayKey === 'To-Do' ? (
+								<button
+									type="button"
+									className={cn(styles.button, styles.ghost)}
+									onClick={(event) => {
+										event.stopPropagation();
+										onToggleComplete(occ.item, !occ.item.completed);
+									}}
+								>
+									{occ.item.completed ? 'Undo' : 'Done'}
+								</button>
+							) : null}
 						</article>
 					))}
 				</div>
