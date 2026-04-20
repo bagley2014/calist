@@ -1,17 +1,30 @@
 @import '../shared.module.less';
 
+.stack {
+	display: grid;
+	gap: 1rem;
+	flex: 1;
+}
+
+.sectionHead {
+	display: flex;
+	gap: 0.9rem;
+	align-items: end;
+	justify-content: space-between;
+
+	h2 {
+		.heading-font();
+	}
+
+	@media (max-width: 960px) {
+		flex-direction: column;
+	}
+}
+
 .grid {
 	display: grid;
 	grid-template-columns: repeat(7, minmax(0, 1fr));
 	gap: 0.7rem;
-
-	@media (max-width: 960px) {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	@media (max-width: 720px) {
-		grid-template-columns: 1fr;
-	}
 }
 
 .gridLabels {

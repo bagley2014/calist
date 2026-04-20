@@ -100,7 +100,6 @@ export function ListView({
 									key={`${occ.item.id}-${occ.occurrenceStartsAt}`}
 									className={cn(
 										styles.card,
-										styles.event,
 										styles[priorityClass(occ.item.priority)],
 										occ.item.completed && styles.completed,
 										isLast && styles.lastEvent
