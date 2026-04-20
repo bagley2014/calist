@@ -1,0 +1,85 @@
+@import './mixins.less';
+
+.button {
+	border: 0;
+	border-radius: 999px;
+	padding: 0.8rem 1.15rem;
+	background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+	color: white;
+	font-weight: 700;
+}
+
+.ghost {
+	background: rgba(17, 24, 50, 0.72);
+	color: var(--ink);
+	border: 1px solid var(--line);
+}
+
+.active {
+	outline: 2px solid rgba(95, 125, 255, 0.45);
+}
+
+.danger {
+	background: linear-gradient(135deg, #3d63ff, #8f5dff);
+}
+
+.eyebrow {
+	.eyebrow();
+}
+
+.message {
+	.glass-panel();
+	.card-radius();
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.9rem 1rem;
+	margin: 0.85rem 0;
+}
+
+.messageError {
+	color: #ffd6f1;
+	border-color: rgba(255, 120, 200, 0.45);
+}
+
+.stack {
+	display: grid;
+	gap: 1rem;
+	flex: 1;
+}
+
+.sectionHead {
+	display: flex;
+	gap: 0.9rem;
+	align-items: end;
+	justify-content: space-between;
+
+	h2 {
+		.heading-font();
+	}
+
+	@media (max-width: 960px) {
+		flex-direction: column;
+	}
+}
+
+.sectionActions {
+	display: flex;
+	gap: 0.9rem;
+	flex-wrap: wrap;
+}
+
+.critical {
+	border-color: var(--critical);
+}
+
+.high {
+	border-color: var(--high);
+}
+
+.medium {
+	border-color: var(--medium);
+}
+
+.low {
+	border-color: var(--low);
+}
