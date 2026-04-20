@@ -1,0 +1,17 @@
+@import '../mixins.less';
+
+.root {
+	.glass-panel();
+	.card-radius();
+	.flex-row();
+	.chip-layout();
+
+	@media (max-width: 960px) {
+		flex-direction: column;
+	}
+}
+
+.actions {
+	display: flex;
+	gap: 0.6rem;
+}

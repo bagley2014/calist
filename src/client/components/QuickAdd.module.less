@@ -1,0 +1,72 @@
+@import '../mixins.less';
+
+.root {
+	margin-bottom: 1.5rem;
+	position: relative;
+}
+
+.bar {
+	.glass-panel();
+	.card-radius();
+	padding: 1.2rem;
+	display: grid;
+	gap: 1rem;
+}
+
+.lead {
+	display: grid;
+	gap: 0.35rem;
+
+	p {
+		.muted-text();
+	}
+}
+
+.badge {
+	.eyebrow();
+}
+
+.inputRow {
+	.flex-row();
+	align-items: center;
+
+	@media (max-width: 960px) {
+		flex-direction: column;
+	}
+}
+
+.fab {
+	display: none;
+	position: fixed;
+	right: 1.5rem;
+	bottom: 1.5rem;
+	width: 72px;
+	height: 72px;
+	border-radius: 999px;
+	border: 0;
+	background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+	color: white;
+	font-weight: 800;
+	box-shadow: var(--shadow);
+}
+
+@media (max-width: 720px) {
+	.bar {
+		display: none;
+	}
+
+	.open {
+		.bar {
+			display: grid;
+			position: fixed;
+			inset: auto 1rem 6.5rem 1rem;
+			z-index: 10;
+		}
+	}
+
+	.fab {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
