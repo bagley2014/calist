@@ -2,8 +2,7 @@ import { getWhenLabel, priorityLabel } from '../lib/formatters';
 
 import type { ParsedQuickAdd } from '@shared/types';
 import cn from 'classnames';
-import s from './ConfirmChip.module.less';
-import shared from '../shared.module.less';
+import styles from './ConfirmChip.module.less';
 
 interface ConfirmChipProps {
 	parsed: ParsedQuickAdd;
@@ -24,13 +23,13 @@ export function ConfirmChip({ parsed, onConfirm, onCancel, busy }: ConfirmChipPr
 		.join(' · ');
 
 	return (
-		<div className={s.root} role="status">
+		<div className={styles.root} role="status">
 			<span>{summary}</span>
-			<div className={s.actions}>
-				<button type="button" className={cn(shared.button, shared.ghost)} onClick={onCancel} disabled={busy}>
+			<div className={styles.actions}>
+				<button type="button" className={cn(styles.button, styles.ghost)} onClick={onCancel} disabled={busy}>
 					Cancel
 				</button>
-				<button type="button" className={shared.button} onClick={onConfirm} disabled={busy}>
+				<button type="button" className={styles.button} onClick={onConfirm} disabled={busy}>
 					{busy ? 'Saving...' : 'Confirm'}
 				</button>
 			</div>

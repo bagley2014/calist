@@ -7,8 +7,7 @@ import { ListView } from './components/ListView';
 import { QuickAdd } from './components/QuickAdd';
 import { Toast } from './components/Toast';
 import cn from 'classnames';
-import s from './App.module.less';
-import shared from './shared.module.less';
+import styles from './App.module.less';
 
 type ScreenState = 'loading' | 'setup' | 'login' | 'ready';
 type ViewState = 'list' | 'calendar';
@@ -272,14 +271,14 @@ export default function App() {
 	}
 
 	if (screen === 'loading') {
-		return <div className={s.splash}>Loading Calist...</div>;
+		return <div className={styles.splash}>Loading Calist...</div>;
 	}
 
 	if (screen === 'setup' || screen === 'login') {
 		return (
-			<main className={s.authShell}>
-				<section className={s.authCard}>
-					<span className={shared.eyebrow}>Calist</span>
+			<main className={styles.authShell}>
+				<section className={styles.authCard}>
+					<span className={styles.eyebrow}>Calist</span>
 					<h1>{screen === 'setup' ? 'First run setup' : 'Welcome back'}</h1>
 					<p>
 						{screen === 'setup'
@@ -296,8 +295,8 @@ export default function App() {
 							<input type="password" value={authConfirm} onChange={(event) => setAuthConfirm(event.target.value)} />
 						</label>
 					) : null}
-					{authError ? <p className={cn(shared.message, shared.messageError)}>{authError}</p> : null}
-					<button type="button" className={shared.button} onClick={() => void handleAuth(screen)} disabled={busy}>
+					{authError ? <p className={cn(styles.message, styles.messageError)}>{authError}</p> : null}
+					<button type="button" className={styles.button} onClick={() => void handleAuth(screen)} disabled={busy}>
 						{busy ? 'Working...' : screen === 'setup' ? 'Save password' : 'Log in'}
 					</button>
 				</section>
@@ -306,30 +305,30 @@ export default function App() {
 	}
 
 	return (
-		<main className={s.shell}>
-			<header className={s.hero}>
+		<main className={styles.shell}>
+			<header className={styles.hero}>
 				<div>
-					<span className={shared.eyebrow}>Calist</span>
+					<span className={styles.eyebrow}>Calist</span>
 				</div>
-				<div className={s.heroActions}>
+				<div className={styles.heroActions}>
 					<button
 						type="button"
-						className={cn(shared.button, view === 'list' ? shared.active : shared.ghost)}
+						className={cn(styles.button, view === 'list' ? styles.active : styles.ghost)}
 						onClick={() => setView('list')}
 					>
 						List
 					</button>
 					<button
 						type="button"
-						className={cn(shared.button, view === 'calendar' ? shared.active : shared.ghost)}
+						className={cn(styles.button, view === 'calendar' ? styles.active : styles.ghost)}
 						onClick={() => setView('calendar')}
 					>
 						Calendar
 					</button>
-					<button type="button" className={cn(shared.button, shared.ghost)} onClick={() => setSettingsOpen(true)}>
+					<button type="button" className={cn(styles.button, styles.ghost)} onClick={() => setSettingsOpen(true)}>
 						Settings
 					</button>
-					<button type="button" className={cn(shared.button, shared.ghost)} onClick={() => void logout()}>
+					<button type="button" className={cn(styles.button, styles.ghost)} onClick={() => void logout()}>
 						Log out
 					</button>
 				</div>
@@ -338,38 +337,38 @@ export default function App() {
 			<QuickAdd onCreate={createItem} />
 
 			{isOffline ? (
-				<div className={shared.message}>
+				<div className={styles.message}>
 					You are offline. The app shell stays available, but live API data needs a connection.
 				</div>
 			) : null}
 			{notice ? <Toast message={notice} duration={3000} onDismiss={() => setNotice(null)} /> : null}
 
 			{settingsOpen ? (
-				<div className={s.backdrop} role="presentation" onClick={() => setSettingsOpen(false)}>
+				<div className={styles.backdrop} role="presentation" onClick={() => setSettingsOpen(false)}>
 					<section
-						className={cn(s.settingsCard, s.modalCard)}
+						className={cn(styles.settingsCard, styles.modalCard)}
 						role="dialog"
 						aria-modal="true"
 						aria-labelledby="settings-heading"
 						onClick={(event) => event.stopPropagation()}
 					>
-						<span className={shared.eyebrow}>Settings</span>
+						<span className={styles.eyebrow}>Settings</span>
 						<h2 id="settings-heading">Export and install</h2>
 						<p>Subscribe from another calendar with the private ICS URL, or install the app to your home screen.</p>
 						<label>
 							ICS feed URL
 							<input readOnly value={settings?.exportUrl ?? ''} />
 						</label>
-						<div className={s.settingsActions}>
-							<button type="button" className={cn(shared.button, shared.ghost)} onClick={() => void regenerateIcsKey()}>
+						<div className={styles.settingsActions}>
+							<button type="button" className={cn(styles.button, styles.ghost)} onClick={() => void regenerateIcsKey()}>
 								Regenerate key
 							</button>
 							{installPrompt ? (
-								<button type="button" className={shared.button} onClick={() => void triggerInstall()}>
+								<button type="button" className={styles.button} onClick={() => void triggerInstall()}>
 									Install PWA
 								</button>
 							) : null}
-							<button type="button" className={cn(shared.button, shared.ghost)} onClick={() => setSettingsOpen(false)}>
+							<button type="button" className={cn(styles.button, styles.ghost)} onClick={() => setSettingsOpen(false)}>
 								Close
 							</button>
 						</div>
@@ -377,7 +376,7 @@ export default function App() {
 				</div>
 			) : null}
 
-			<div className={s.contentGrid}>
+			<div className={styles.contentGrid}>
 				{view === 'list' ? (
 					<ListView
 						items={items}

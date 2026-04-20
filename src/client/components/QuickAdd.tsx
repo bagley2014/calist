@@ -4,8 +4,7 @@ import { ConfirmChip } from './ConfirmChip';
 import type { ParsedQuickAdd } from '@shared/types';
 import cn from 'classnames';
 import { parseInput } from '../lib/parseInput';
-import s from './QuickAdd.module.less';
-import shared from '../shared.module.less';
+import styles from './QuickAdd.module.less';
 import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 
 interface QuickAddProps {
@@ -56,19 +55,19 @@ export function QuickAdd({ onCreate }: QuickAddProps) {
 	}
 
 	return (
-		<section className={cn(s.root, isMobileOpen && s.open)}>
+		<section className={cn(styles.root, isMobileOpen && styles.open)}>
 			<form
-				className={s.bar}
+				className={styles.bar}
 				onSubmit={(event) => {
 					event.preventDefault();
 					handlePreview();
 				}}
 			>
-				<div className={s.lead}>
-					<span className={s.badge}>Quick add</span>
+				<div className={styles.lead}>
+					<span className={styles.badge}>Quick add</span>
 					<p>Type naturally: dentist friday 3pm high</p>
 				</div>
-				<div className={s.inputRow}>
+				<div className={styles.inputRow}>
 					<input
 						ref={inputRef}
 						value={draft}
@@ -80,18 +79,18 @@ export function QuickAdd({ onCreate }: QuickAddProps) {
 						placeholder="Add an item with time, priority, or recurrence"
 						aria-label="Quick add"
 					/>
-					<button className={shared.button} type="submit">
+					<button className={styles.button} type="submit">
 						Parse
 					</button>
 				</div>
 			</form>
 
-			{error ? <p className={cn(shared.message, shared.messageError)}>{error}</p> : null}
+			{error ? <p className={cn(styles.message, styles.messageError)}>{error}</p> : null}
 			{parsed ? (
 				<ConfirmChip parsed={parsed} onConfirm={handleConfirm} onCancel={() => setParsed(null)} busy={isSaving} />
 			) : null}
 
-			<button type="button" className={s.fab} onClick={() => setIsMobileOpen((current) => !current)}>
+			<button type="button" className={styles.fab} onClick={() => setIsMobileOpen((current) => !current)}>
 				{isMobileOpen ? 'Close' : 'New'}
 			</button>
 		</section>

@@ -8,8 +8,7 @@ import {
 import { useEffect, useState } from 'react';
 
 import cn from 'classnames';
-import s from './DetailPanel.module.less';
-import shared from '../shared.module.less';
+import styles from './DetailPanel.module.less';
 
 interface DetailPanelProps {
 	item: Item | null;
@@ -74,18 +73,18 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 	}
 
 	return (
-		<aside className={s.root}>
-			<div className={s.head}>
+		<aside className={styles.root}>
+			<div className={styles.head}>
 				<div>
-					<span className={shared.eyebrow}>Detail</span>
+					<span className={styles.eyebrow}>Detail</span>
 					<h2>{item.title}</h2>
 				</div>
-				<button type="button" className={cn(shared.button, shared.ghost)} onClick={onClose}>
+				<button type="button" className={cn(styles.button, styles.ghost)} onClick={onClose}>
 					Close
 				</button>
 			</div>
 
-			<div className={s.body}>
+			<div className={styles.body}>
 				<label>
 					Title
 					<input value={title} onChange={(event) => setTitle(event.target.value)} />
@@ -107,12 +106,12 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 					</select>
 				</label>
 
-				<label className={s.checkboxRow}>
+				<label className={styles.checkboxRow}>
 					<input type="checkbox" checked={isAllDay} onChange={(event) => setIsAllDay(event.target.checked)} />
 					All day
 				</label>
 
-				<div className={s.grid}>
+				<div className={styles.grid}>
 					<label>
 						Start date
 						<input type="date" value={startDate} onChange={(event) => setStartDate(event.target.value)} />
@@ -139,13 +138,13 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 					Recurrence rule
 					<button
 						type="button"
-						className={s.editToggle}
+						className={styles.editToggle}
 						aria-expanded={showRRuleEditor}
 						onClick={() => setShowRRuleEditor((v) => !v)}
 					>
 						{showRRuleEditor ? 'done' : 'edit'}
 					</button>
-					{rrule ? <p className={s.hint}>{humanizeRRule(normalizeRuleText(rrule))}</p> : null}
+					{rrule ? <p className={styles.hint}>{humanizeRRule(normalizeRuleText(rrule))}</p> : null}
 					{showRRuleEditor ? (
 						<textarea
 							rows={3}
@@ -156,13 +155,13 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 					) : null}
 				</label>
 
-				{error ? <p className={cn(shared.message, shared.messageError)}>{error}</p> : null}
+				{error ? <p className={cn(styles.message, styles.messageError)}>{error}</p> : null}
 			</div>
 
-			<div className={s.actions}>
+			<div className={styles.actions}>
 				<button
 					type="button"
-					className={shared.button}
+					className={styles.button}
 					disabled={busy}
 					onClick={() =>
 						runAction(async () => {
@@ -183,7 +182,7 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 				{item.startsAt === null && (
 					<button
 						type="button"
-						className={cn(shared.button, shared.ghost)}
+						className={cn(styles.button, styles.ghost)}
 						disabled={busy}
 						onClick={() => runAction(() => onToggleComplete(item, !item.completed))}
 					>
@@ -193,7 +192,7 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 				{item.rrule ? (
 					<button
 						type="button"
-						className={cn(shared.button, shared.ghost)}
+						className={cn(styles.button, styles.ghost)}
 						disabled={busy}
 						onClick={() => runAction(() => onSkipNext(item.id))}
 					>
@@ -202,7 +201,7 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 				) : null}
 				<button
 					type="button"
-					className={cn(shared.button, shared.danger)}
+					className={cn(styles.button, styles.danger)}
 					disabled={busy}
 					onClick={() =>
 						runAction(async () => {

@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import cn from 'classnames';
-import s from './Toast.module.less';
-import shared from '../shared.module.less';
+import styles from './Toast.module.less';
 
 interface ToastProps {
 	message: string;
@@ -41,14 +40,14 @@ export function Toast({ message, duration = 4000, onDismiss }: ToastProps) {
 	}
 
 	return (
-		<div className={cn(s.root, visible && s.visible)} role="status" aria-live="polite">
-			<div className={s.body}>
-				<span className={s.text}>{message}</span>
-				<button type="button" className={cn(shared.button, shared.ghost, s.dismiss)} onClick={handleDismiss}>
+		<div className={cn(styles.root, visible && styles.visible)} role="status" aria-live="polite">
+			<div className={styles.body}>
+				<span className={styles.text}>{message}</span>
+				<button type="button" className={cn(styles.button, styles.ghost, styles.dismiss)} onClick={handleDismiss}>
 					Dismiss
 				</button>
 			</div>
-			<div className={s.progress} style={{ animationDuration: `${duration}ms` }} />
+			<div className={styles.progress} style={{ animationDuration: `${duration}ms` }} />
 		</div>
 	);
 }

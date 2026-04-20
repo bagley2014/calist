@@ -4,8 +4,7 @@ import type { Item } from '@shared/types';
 import type { ItemOccurrence } from '../lib/recurrence';
 import cn from 'classnames';
 import { expandRecurringItems } from '../lib/recurrence';
-import s from './CalendarView.module.less';
-import shared from '../shared.module.less';
+import styles from './CalendarView.module.less';
 
 interface CalendarViewProps {
 	items: Item[];
@@ -56,33 +55,33 @@ export function CalendarView({
 	}, new Map());
 
 	return (
-		<section className={shared.stack}>
-			<div className={shared.sectionHead}>
+		<section className={styles.stack}>
+			<div className={styles.sectionHead}>
 				<div>
-					<span className={shared.eyebrow}>Calendar</span>
+					<span className={styles.eyebrow}>Calendar</span>
 					<h2>{getMonthLabel(month)}</h2>
 				</div>
-				<div className={shared.sectionActions}>
-					<button type="button" className={cn(shared.button, shared.ghost)} onClick={onPrevMonth}>
+				<div className={styles.sectionActions}>
+					<button type="button" className={cn(styles.button, styles.ghost)} onClick={onPrevMonth}>
 						Prev
 					</button>
-					<button type="button" className={cn(shared.button, shared.ghost)} onClick={onToday}>
+					<button type="button" className={cn(styles.button, styles.ghost)} onClick={onToday}>
 						Today
 					</button>
-					<button type="button" className={cn(shared.button, shared.ghost)} onClick={onNextMonth}>
+					<button type="button" className={cn(styles.button, styles.ghost)} onClick={onNextMonth}>
 						Next
 					</button>
 				</div>
 			</div>
 
-			<div className={cn(s.grid, s.gridLabels)}>
+			<div className={cn(styles.grid, styles.gridLabels)}>
 				{['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((label) => (
-					<div key={label} className={s.label}>
+					<div key={label} className={styles.label}>
 						{label}
 					</div>
 				))}
 			</div>
-			<div className={s.grid}>
+			<div className={styles.grid}>
 				{days.map((day) => {
 					const key = dateToLocalDateKey(day);
 					const dayItems = itemMap.get(key) ?? [];
@@ -91,21 +90,23 @@ export function CalendarView({
 						<button
 							key={key}
 							type="button"
-							className={cn(s.day, !isCurrentMonth && s.muted, activeDay === key && s.dayActive)}
+							className={cn(styles.day, !isCurrentMonth && styles.muted, activeDay === key && styles.dayActive)}
 							onClick={() => onSelectDay(key)}
 						>
-							<span className={s.date}>{day.getDate()}</span>
-							<div className={s.chips}>
+							<span className={styles.date}>{day.getDate()}</span>
+							<div className={styles.chips}>
 								{dayItems.slice(0, 3).map((occ) => (
 									<span
 										key={`${occ.item.id}-${occ.occurrenceStartsAt}`}
-										className={cn(s.chip, shared[priorityClass(occ.item.priority)])}
+										className={cn(styles.chip, styles[priorityClass(occ.item.priority)])}
 										title={occ.item.title}
 									>
 										{occ.item.title}
 									</span>
 								))}
-								{dayItems.length > 3 ? <span className={cn(s.chip, s.overflow)}>+{dayItems.length - 3}</span> : null}
+								{dayItems.length > 3 ? (
+									<span className={cn(styles.chip, styles.overflow)}>+{dayItems.length - 3}</span>
+								) : null}
 							</div>
 						</button>
 					);

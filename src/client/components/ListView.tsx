@@ -3,8 +3,7 @@ import type { Item } from '@shared/types';
 import { expandRecurringItems, type ItemOccurrence } from '../lib/recurrence';
 import { buildChipSummary, epochSecondsToDateKey, getDayHeading, priorityClass } from '../lib/formatters';
 import { useMemo } from 'react';
-import s from './ListView.module.less';
-import shared from '../shared.module.less';
+import styles from './ListView.module.less';
 
 interface ListViewProps {
 	items: Item[];
@@ -67,17 +66,17 @@ export function ListView({
 	}, new Map());
 
 	return (
-		<section className={shared.stack}>
-			<div className={shared.sectionHead}>
+		<section className={styles.stack}>
+			<div className={styles.sectionHead}>
 				<div>
-					<span className={shared.eyebrow}>List</span>
+					<span className={styles.eyebrow}>List</span>
 				</div>
-				<div className={shared.sectionActions}>
-					<button type="button" className={cn(shared.button, shared.ghost)} onClick={onToggleShowCompleted}>
+				<div className={styles.sectionActions}>
+					<button type="button" className={cn(styles.button, styles.ghost)} onClick={onToggleShowCompleted}>
 						{showCompleted ? 'Hide completed' : 'Show completed'}
 					</button>
 					{activeDay ? (
-						<button type="button" className={cn(shared.button, shared.ghost)} onClick={onClearDayFilter}>
+						<button type="button" className={cn(styles.button, styles.ghost)} onClick={onClearDayFilter}>
 							Clear day filter
 						</button>
 					) : null}
@@ -85,24 +84,28 @@ export function ListView({
 			</div>
 
 			{undatedItems.length > 0 ? (
-				<div className={s.group}>
+				<div className={styles.group}>
 					<h3>To-Do</h3>
 					{undatedItems.map((occ) => (
 						<article
 							key={`${occ.item.id}-undated`}
-							className={cn(s.card, shared[priorityClass(occ.item.priority)], occ.item.completed && s.completed)}
+							className={cn(
+								styles.card,
+								styles[priorityClass(occ.item.priority)],
+								occ.item.completed && styles.completed
+							)}
 							onClick={() => onSelectItem(occ.item.id)}
 						>
 							<div>
-								<div className={s.titleRow}>
+								<div className={styles.titleRow}>
 									<h4>{occ.item.title}</h4>
-									{occ.item.rrule ? <span className={s.repeat}>Repeat</span> : null}
+									{occ.item.rrule ? <span className={styles.repeat}>Repeat</span> : null}
 								</div>
 								<p>{buildChipSummary(occ.item)}</p>
 							</div>
 							<button
 								type="button"
-								className={cn(shared.button, shared.ghost)}
+								className={cn(styles.button, styles.ghost)}
 								onClick={(event) => {
 									event.stopPropagation();
 									onToggleComplete(occ.item, !occ.item.completed);
@@ -116,18 +119,22 @@ export function ListView({
 			) : null}
 
 			{[...groups.entries()].map(([dayKey, groupOccs]) => (
-				<div className={s.group} key={dayKey}>
+				<div className={styles.group} key={dayKey}>
 					<h3>{getDayHeading(groupOccs[0].occurrenceStartsAt ?? 0)}</h3>
 					{groupOccs.map((occ) => (
 						<article
 							key={`${occ.item.id}-${occ.occurrenceStartsAt}`}
-							className={cn(s.card, shared[priorityClass(occ.item.priority)], occ.item.completed && s.completed)}
+							className={cn(
+								styles.card,
+								styles[priorityClass(occ.item.priority)],
+								occ.item.completed && styles.completed
+							)}
 							onClick={() => onSelectItem(occ.item.id)}
 						>
 							<div>
-								<div className={s.titleRow}>
+								<div className={styles.titleRow}>
 									<h4>{occ.item.title}</h4>
-									{occ.item.rrule ? <span className={s.repeat}>Repeat</span> : null}
+									{occ.item.rrule ? <span className={styles.repeat}>Repeat</span> : null}
 								</div>
 								<p>{buildChipSummary(occ.item)}</p>
 							</div>
@@ -136,7 +143,7 @@ export function ListView({
 				</div>
 			))}
 
-			{visibleOccurrences.length === 0 ? <div className={s.empty}>No items match the current filter.</div> : null}
+			{visibleOccurrences.length === 0 ? <div className={styles.empty}>No items match the current filter.</div> : null}
 		</section>
 	);
 }
