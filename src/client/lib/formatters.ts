@@ -32,10 +32,6 @@ export function priorityLabel(priority: Priority) {
 	return priority.charAt(0).toUpperCase() + priority.slice(1);
 }
 
-export function priorityClass(priority: Priority) {
-	return priority;
-}
-
 export function getWhenLabel(startsAt: number | null, isAllDay: boolean) {
 	if (startsAt === null) {
 		return 'Undated';

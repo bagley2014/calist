@@ -1,4 +1,4 @@
-import { dateToLocalDateKey, epochSecondsToDateKey, getMonthLabel, priorityClass } from '../lib/formatters';
+import { dateToLocalDateKey, epochSecondsToDateKey, getMonthLabel } from '../lib/formatters';
 
 import type { Item } from '@shared/types';
 import type { ItemOccurrence } from '../lib/recurrence';
@@ -98,7 +98,7 @@ export function CalendarView({
 								{dayItems.slice(0, 3).map((occ) => (
 									<span
 										key={`${occ.item.id}-${occ.occurrenceStartsAt}`}
-										className={cn(styles.chip, styles[priorityClass(occ.item.priority)])}
+										className={cn(styles.chip, styles[occ.item.priority])}
 										title={occ.item.title}
 									>
 										{occ.item.title}

@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import type { Item } from '@shared/types';
 import { expandRecurringItems, type ItemOccurrence } from '../lib/recurrence';
-import { buildChipSummary, epochSecondsToDateKey, getDayHeading, priorityClass } from '../lib/formatters';
+import { buildChipSummary, epochSecondsToDateKey, getDayHeading } from '../lib/formatters';
 import { useMemo } from 'react';
 import styles from './ListView.module.less';
 
@@ -100,7 +100,7 @@ export function ListView({
 									key={`${occ.item.id}-${occ.occurrenceStartsAt}`}
 									className={cn(
 										styles.card,
-										styles[priorityClass(occ.item.priority)],
+										styles[occ.item.priority],
 										occ.item.completed && styles.completed,
 										isLast && styles.lastEvent
 									)}
