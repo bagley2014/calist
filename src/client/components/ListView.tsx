@@ -1,17 +1,8 @@
 import './ListView.less';
 
-import {
-	buildChipSummary,
-	epochSecondsToDateKey,
-	getDayHeading,
-	getWhenLabel,
-	humanizeRRule,
-	priorityClass,
-} from '../lib/formatters';
-
 import type { Item } from '@shared/types';
-import type { ItemOccurrence } from '../lib/recurrence';
-import { expandRecurringItems } from '../lib/recurrence';
+import { expandRecurringItems, type ItemOccurrence } from '../lib/recurrence';
+import { buildChipSummary, epochSecondsToDateKey, getDayHeading, priorityClass } from '../lib/formatters';
 import { useMemo } from 'react';
 
 interface ListViewProps {
