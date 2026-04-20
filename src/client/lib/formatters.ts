@@ -33,7 +33,7 @@ export function priorityLabel(priority: Priority) {
 }
 
 export function priorityClass(priority: Priority) {
-	return `priority-${priority}`;
+	return priority;
 }
 
 export function getWhenLabel(startsAt: number | null, isAllDay: boolean) {
