@@ -109,7 +109,7 @@ export function ListView({
 									<div>
 										<div className={styles.titleRow}>
 											<h4>{occ.item.title}</h4>
-											{occ.item.rrule ? <span className={styles.repeat}>Repeat</span> : null}
+											{dayKey === 'To-Do' || occ.item.rrule ? null : <span className={styles.unique}>Unique</span>}
 										</div>
 										<p>{buildChipSummary(occ.item)}</p>
 									</div>
