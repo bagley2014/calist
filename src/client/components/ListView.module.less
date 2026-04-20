@@ -1,32 +1,59 @@
 @import '../shared.module.less';
 
 .group {
-	.glass-panel();
-	.panel-radius();
-	padding: 1.2rem;
 	display: grid;
-	gap: 0.75rem;
+	/* Percentage-based columns: day column (left), events column (right) */
+	grid-template-columns: 30% 70%;
+	gap: 0;
+	align-items: start;
+	padding: 0;
+}
+
+.dayColumn {
+	padding-right: 0.5rem;
+	align-self: start;
 
 	h3 {
 		margin: 0;
+		font-weight: 600;
 	}
 }
 
+.eventsColumn {
+	display: flex;
+	flex-direction: column;
+}
+
 .card {
-	.glass-panel();
-	.card-radius();
 	.flex-row();
 	align-items: center;
 	justify-content: space-between;
-	padding: 1rem;
+	/* compact vertical spacing */
+	padding: 0.45rem 0.5rem;
+	background: transparent;
+	border-radius: 0;
+	margin: 0;
 
 	h4 {
 		margin: 0;
+		font-size: 0.98rem;
 	}
 
 	p {
 		.muted-text();
+		font-size: 0.85rem;
+		margin: 0.12rem 0 0;
 	}
+}
+
+/* Thin separators between events */
+.event {
+	border-bottom: 1px solid var(--line);
+}
+
+/* Thicker separator at the end of a day group */
+.lastEvent {
+	border-bottom: 2px solid var(--line);
 }
 
 .titleRow {

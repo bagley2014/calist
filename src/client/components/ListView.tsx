@@ -89,38 +89,47 @@ export function ListView({
 
 			{entries.map(([dayKey, groupOccurrences]) => (
 				<div className={styles.group} key={dayKey}>
-					<h3>{dayKey === 'To-Do' ? dayKey : getDayHeading(groupOccurrences[0].occurrenceStartsAt!)}</h3>
-					{groupOccurrences.map((occ) => (
-						<article
-							key={`${occ.item.id}-${occ.occurrenceStartsAt}`}
-							className={cn(
-								styles.card,
-								styles[priorityClass(occ.item.priority)],
-								occ.item.completed && styles.completed
-							)}
-							onClick={() => onSelectItem(occ.item.id)}
-						>
-							<div>
-								<div className={styles.titleRow}>
-									<h4>{occ.item.title}</h4>
-									{occ.item.rrule ? <span className={styles.repeat}>Repeat</span> : null}
-								</div>
-								<p>{buildChipSummary(occ.item)}</p>
-							</div>
-							{dayKey === 'To-Do' ? (
-								<button
-									type="button"
-									className={cn(styles.button, styles.ghost)}
-									onClick={(event) => {
-										event.stopPropagation();
-										onToggleComplete(occ.item, !occ.item.completed);
-									}}
+					<div className={styles.dayColumn}>
+						<h3>{dayKey === 'To-Do' ? dayKey : getDayHeading(groupOccurrences[0].occurrenceStartsAt!)}</h3>
+					</div>
+					<div className={styles.eventsColumn}>
+						{groupOccurrences.map((occ, idx) => {
+							const isLast = idx === groupOccurrences.length - 1;
+							return (
+								<article
+									key={`${occ.item.id}-${occ.occurrenceStartsAt}`}
+									className={cn(
+										styles.card,
+										styles.event,
+										styles[priorityClass(occ.item.priority)],
+										occ.item.completed && styles.completed,
+										isLast && styles.lastEvent
+									)}
+									onClick={() => onSelectItem(occ.item.id)}
 								>
-									{occ.item.completed ? 'Undo' : 'Done'}
-								</button>
-							) : null}
-						</article>
-					))}
+									<div>
+										<div className={styles.titleRow}>
+											<h4>{occ.item.title}</h4>
+											{occ.item.rrule ? <span className={styles.repeat}>Repeat</span> : null}
+										</div>
+										<p>{buildChipSummary(occ.item)}</p>
+									</div>
+									{dayKey === 'To-Do' ? (
+										<button
+											type="button"
+											className={cn(styles.button, styles.ghost)}
+											onClick={(event) => {
+												event.stopPropagation();
+												onToggleComplete(occ.item, !occ.item.completed);
+											}}
+										>
+											{occ.item.completed ? 'Undo' : 'Done'}
+										</button>
+									) : null}
+								</article>
+							);
+						})}
+					</div>
 				</div>
 			))}
 
