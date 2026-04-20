@@ -2,10 +2,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'node:path';
-import typedCssModulesPlugin from 'vite-plugin-typed-css-modules';
 
 export default defineConfig({
-	plugins: [react(), typedCssModulesPlugin({ include: ['**/*.module.less'] })],
+	plugins: [react()],
 	root: resolve(__dirname, 'src/client'),
 	publicDir: resolve(__dirname, 'public'),
 	build: { outDir: resolve(__dirname, 'dist/client'), emptyOutDir: true },
