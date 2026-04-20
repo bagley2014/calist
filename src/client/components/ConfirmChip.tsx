@@ -1,6 +1,7 @@
-import cn from 'classnames';
 import { getWhenLabel, priorityLabel } from '../lib/formatters';
+
 import type { ParsedQuickAdd } from '@shared/types';
+import cn from 'classnames';
 import s from './ConfirmChip.module.less';
 import shared from '../shared.module.less';
 

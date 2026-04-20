@@ -1,7 +1,8 @@
-import cn from 'classnames';
 import { dateToLocalDateKey, epochSecondsToDateKey, getMonthLabel, priorityClass } from '../lib/formatters';
+
 import type { Item } from '@shared/types';
 import type { ItemOccurrence } from '../lib/recurrence';
+import cn from 'classnames';
 import { expandRecurringItems } from '../lib/recurrence';
 import s from './CalendarView.module.less';
 import shared from '../shared.module.less';

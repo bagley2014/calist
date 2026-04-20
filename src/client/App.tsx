@@ -1,14 +1,14 @@
-import cn from 'classnames';
 import type { Item, ParsedQuickAdd, SchedulerSettings } from '@shared/types';
 import { useEffect, useState } from 'react';
-import s from './App.module.less';
-import shared from './shared.module.less';
 
 import { CalendarView } from './components/CalendarView';
 import { DetailPanel } from './components/DetailPanel';
 import { ListView } from './components/ListView';
 import { QuickAdd } from './components/QuickAdd';
 import { Toast } from './components/Toast';
+import cn from 'classnames';
+import s from './App.module.less';
+import shared from './shared.module.less';
 
 type ScreenState = 'loading' | 'setup' | 'login' | 'ready';
 type ViewState = 'list' | 'calendar';

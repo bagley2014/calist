@@ -1,11 +1,12 @@
-import cn from 'classnames';
 import { useRef, useState } from 'react';
+
 import { ConfirmChip } from './ConfirmChip';
 import type { ParsedQuickAdd } from '@shared/types';
+import cn from 'classnames';
 import { parseInput } from '../lib/parseInput';
-import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 import s from './QuickAdd.module.less';
 import shared from '../shared.module.less';
+import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 
 interface QuickAddProps {
 	onCreate: (parsed: ParsedQuickAdd) => Promise<void>;

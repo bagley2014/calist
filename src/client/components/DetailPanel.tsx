@@ -1,4 +1,3 @@
-import cn from 'classnames';
 import type { Item, Priority } from '@shared/types';
 import {
 	epochSecondsToDateInputValue,
@@ -7,6 +6,8 @@ import {
 	localDateTimeToEpochSeconds,
 } from '../lib/formatters';
 import { useEffect, useState } from 'react';
+
+import cn from 'classnames';
 import s from './DetailPanel.module.less';
 import shared from '../shared.module.less';
 
