@@ -1,5 +1,4 @@
-import './DetailPanel.less';
-
+import cn from 'classnames';
 import type { Item, Priority } from '@shared/types';
 import {
 	epochSecondsToDateInputValue,
@@ -8,6 +7,8 @@ import {
 	localDateTimeToEpochSeconds,
 } from '../lib/formatters';
 import { useEffect, useState } from 'react';
+import s from './DetailPanel.module.less';
+import shared from '../shared.module.less';
 
 interface DetailPanelProps {
 	item: Item | null;
@@ -72,18 +73,18 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 	}
 
 	return (
-		<aside className="detail-panel">
-			<div className="detail-panel__head">
+		<aside className={s.root}>
+			<div className={s.head}>
 				<div>
-					<span className="eyebrow">Detail</span>
+					<span className={shared.eyebrow}>Detail</span>
 					<h2>{item.title}</h2>
 				</div>
-				<button type="button" className="button button--ghost" onClick={onClose}>
+				<button type="button" className={cn(shared.button, shared.ghost)} onClick={onClose}>
 					Close
 				</button>
 			</div>
 
-			<div className="detail-panel__body">
+			<div className={s.body}>
 				<label>
 					Title
 					<input value={title} onChange={(event) => setTitle(event.target.value)} />
@@ -105,12 +106,12 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 					</select>
 				</label>
 
-				<label className="checkbox-row">
+				<label className={s.checkboxRow}>
 					<input type="checkbox" checked={isAllDay} onChange={(event) => setIsAllDay(event.target.checked)} />
 					All day
 				</label>
 
-				<div className="detail-panel__grid">
+				<div className={s.grid}>
 					<label>
 						Start date
 						<input type="date" value={startDate} onChange={(event) => setStartDate(event.target.value)} />
@@ -137,13 +138,13 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 					Recurrence rule
 					<button
 						type="button"
-						className="detail-panel__edit-toggle"
+						className={s.editToggle}
 						aria-expanded={showRRuleEditor}
 						onClick={() => setShowRRuleEditor((v) => !v)}
 					>
 						{showRRuleEditor ? 'done' : 'edit'}
 					</button>
-					{rrule ? <p className="detail-panel__hint">{humanizeRRule(normalizeRuleText(rrule))}</p> : null}
+					{rrule ? <p className={s.hint}>{humanizeRRule(normalizeRuleText(rrule))}</p> : null}
 					{showRRuleEditor ? (
 						<textarea
 							rows={3}
@@ -154,13 +155,13 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 					) : null}
 				</label>
 
-				{error ? <p className="inline-message inline-message--error">{error}</p> : null}
+				{error ? <p className={cn(shared.message, shared.messageError)}>{error}</p> : null}
 			</div>
 
-			<div className="detail-panel__actions">
+			<div className={s.actions}>
 				<button
 					type="button"
-					className="button"
+					className={shared.button}
 					disabled={busy}
 					onClick={() =>
 						runAction(async () => {
@@ -181,7 +182,7 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 				{item.startsAt === null && (
 					<button
 						type="button"
-						className="button button--ghost"
+						className={cn(shared.button, shared.ghost)}
 						disabled={busy}
 						onClick={() => runAction(() => onToggleComplete(item, !item.completed))}
 					>
@@ -191,7 +192,7 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 				{item.rrule ? (
 					<button
 						type="button"
-						className="button button--ghost"
+						className={cn(shared.button, shared.ghost)}
 						disabled={busy}
 						onClick={() => runAction(() => onSkipNext(item.id))}
 					>
@@ -200,7 +201,7 @@ export function DetailPanel({ item, onClose, onSave, onDelete, onToggleComplete,
 				) : null}
 				<button
 					type="button"
-					className="button button--danger"
+					className={cn(shared.button, shared.danger)}
 					disabled={busy}
 					onClick={() =>
 						runAction(async () => {

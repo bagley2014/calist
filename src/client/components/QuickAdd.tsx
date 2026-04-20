@@ -1,11 +1,11 @@
-import './QuickAdd.less';
-
+import cn from 'classnames';
 import { useRef, useState } from 'react';
-
 import { ConfirmChip } from './ConfirmChip';
 import type { ParsedQuickAdd } from '@shared/types';
 import { parseInput } from '../lib/parseInput';
 import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
+import s from './QuickAdd.module.less';
+import shared from '../shared.module.less';
 
 interface QuickAddProps {
 	onCreate: (parsed: ParsedQuickAdd) => Promise<void>;
@@ -55,19 +55,19 @@ export function QuickAdd({ onCreate }: QuickAddProps) {
 	}
 
 	return (
-		<section className={`quick-add ${isMobileOpen ? 'quick-add--open' : ''}`}>
+		<section className={cn(s.root, isMobileOpen && s.open)}>
 			<form
-				className="quick-add__bar"
+				className={s.bar}
 				onSubmit={(event) => {
 					event.preventDefault();
 					handlePreview();
 				}}
 			>
-				<div className="quick-add__lead">
-					<span className="quick-add__badge">Quick add</span>
+				<div className={s.lead}>
+					<span className={s.badge}>Quick add</span>
 					<p>Type naturally: dentist friday 3pm high</p>
 				</div>
-				<div className="quick-add__input-row">
+				<div className={s.inputRow}>
 					<input
 						ref={inputRef}
 						value={draft}
@@ -79,18 +79,18 @@ export function QuickAdd({ onCreate }: QuickAddProps) {
 						placeholder="Add an item with time, priority, or recurrence"
 						aria-label="Quick add"
 					/>
-					<button className="button" type="submit">
+					<button className={shared.button} type="submit">
 						Parse
 					</button>
 				</div>
 			</form>
 
-			{error ? <p className="inline-message inline-message--error">{error}</p> : null}
+			{error ? <p className={cn(shared.message, shared.messageError)}>{error}</p> : null}
 			{parsed ? (
 				<ConfirmChip parsed={parsed} onConfirm={handleConfirm} onCancel={() => setParsed(null)} busy={isSaving} />
 			) : null}
 
-			<button type="button" className="quick-add__fab" onClick={() => setIsMobileOpen((current) => !current)}>
+			<button type="button" className={s.fab} onClick={() => setIsMobileOpen((current) => !current)}>
 				{isMobileOpen ? 'Close' : 'New'}
 			</button>
 		</section>

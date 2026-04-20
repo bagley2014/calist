@@ -1,7 +1,8 @@
-import './App.less';
-
+import cn from 'classnames';
 import type { Item, ParsedQuickAdd, SchedulerSettings } from '@shared/types';
 import { useEffect, useState } from 'react';
+import s from './App.module.less';
+import shared from './shared.module.less';
 
 import { CalendarView } from './components/CalendarView';
 import { DetailPanel } from './components/DetailPanel';
@@ -271,14 +272,14 @@ export default function App() {
 	}
 
 	if (screen === 'loading') {
-		return <div className="splash">Loading Calist...</div>;
+		return <div className={s.splash}>Loading Calist...</div>;
 	}
 
 	if (screen === 'setup' || screen === 'login') {
 		return (
-			<main className="auth-shell">
-				<section className="auth-card">
-					<span className="eyebrow">Calist</span>
+			<main className={s.authShell}>
+				<section className={s.authCard}>
+					<span className={shared.eyebrow}>Calist</span>
 					<h1>{screen === 'setup' ? 'First run setup' : 'Welcome back'}</h1>
 					<p>
 						{screen === 'setup'
@@ -295,8 +296,8 @@ export default function App() {
 							<input type="password" value={authConfirm} onChange={(event) => setAuthConfirm(event.target.value)} />
 						</label>
 					) : null}
-					{authError ? <p className="inline-message inline-message--error">{authError}</p> : null}
-					<button type="button" className="button" onClick={() => void handleAuth(screen)} disabled={busy}>
+					{authError ? <p className={cn(shared.message, shared.messageError)}>{authError}</p> : null}
+					<button type="button" className={shared.button} onClick={() => void handleAuth(screen)} disabled={busy}>
 						{busy ? 'Working...' : screen === 'setup' ? 'Save password' : 'Log in'}
 					</button>
 				</section>
@@ -305,30 +306,30 @@ export default function App() {
 	}
 
 	return (
-		<main className="app-shell">
-			<header className="hero">
+		<main className={s.shell}>
+			<header className={s.hero}>
 				<div>
-					<span className="eyebrow">Calist</span>
+					<span className={shared.eyebrow}>Calist</span>
 				</div>
-				<div className="hero__actions">
+				<div className={s.heroActions}>
 					<button
 						type="button"
-						className={`button ${view === 'list' ? 'button--active' : 'button--ghost'}`}
+						className={cn(shared.button, view === 'list' ? shared.active : shared.ghost)}
 						onClick={() => setView('list')}
 					>
 						List
 					</button>
 					<button
 						type="button"
-						className={`button ${view === 'calendar' ? 'button--active' : 'button--ghost'}`}
+						className={cn(shared.button, view === 'calendar' ? shared.active : shared.ghost)}
 						onClick={() => setView('calendar')}
 					>
 						Calendar
 					</button>
-					<button type="button" className="button button--ghost" onClick={() => setSettingsOpen(true)}>
+					<button type="button" className={cn(shared.button, shared.ghost)} onClick={() => setSettingsOpen(true)}>
 						Settings
 					</button>
-					<button type="button" className="button button--ghost" onClick={() => void logout()}>
+					<button type="button" className={cn(shared.button, shared.ghost)} onClick={() => void logout()}>
 						Log out
 					</button>
 				</div>
@@ -337,38 +338,38 @@ export default function App() {
 			<QuickAdd onCreate={createItem} />
 
 			{isOffline ? (
-				<div className="inline-message">
+				<div className={shared.message}>
 					You are offline. The app shell stays available, but live API data needs a connection.
 				</div>
 			) : null}
 			{notice ? <Toast message={notice} duration={3000} onDismiss={() => setNotice(null)} /> : null}
 
 			{settingsOpen ? (
-				<div className="modal-backdrop" role="presentation" onClick={() => setSettingsOpen(false)}>
+				<div className={s.backdrop} role="presentation" onClick={() => setSettingsOpen(false)}>
 					<section
-						className="settings-card modal-card"
+						className={cn(s.settingsCard, s.modalCard)}
 						role="dialog"
 						aria-modal="true"
 						aria-labelledby="settings-heading"
 						onClick={(event) => event.stopPropagation()}
 					>
-						<span className="eyebrow">Settings</span>
+						<span className={shared.eyebrow}>Settings</span>
 						<h2 id="settings-heading">Export and install</h2>
 						<p>Subscribe from another calendar with the private ICS URL, or install the app to your home screen.</p>
 						<label>
 							ICS feed URL
 							<input readOnly value={settings?.exportUrl ?? ''} />
 						</label>
-						<div className="settings-card__actions">
-							<button type="button" className="button button--ghost" onClick={() => void regenerateIcsKey()}>
+						<div className={s.settingsActions}>
+							<button type="button" className={cn(shared.button, shared.ghost)} onClick={() => void regenerateIcsKey()}>
 								Regenerate key
 							</button>
 							{installPrompt ? (
-								<button type="button" className="button" onClick={() => void triggerInstall()}>
+								<button type="button" className={shared.button} onClick={() => void triggerInstall()}>
 									Install PWA
 								</button>
 							) : null}
-							<button type="button" className="button button--ghost" onClick={() => setSettingsOpen(false)}>
+							<button type="button" className={cn(shared.button, shared.ghost)} onClick={() => setSettingsOpen(false)}>
 								Close
 							</button>
 						</div>
@@ -376,7 +377,7 @@ export default function App() {
 				</div>
 			) : null}
 
-			<div className="content-grid">
+			<div className={s.contentGrid}>
 				{view === 'list' ? (
 					<ListView
 						items={items}

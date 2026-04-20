@@ -1,8 +1,8 @@
-import './ConfirmChip.less';
-
+import cn from 'classnames';
 import { getWhenLabel, priorityLabel } from '../lib/formatters';
-
 import type { ParsedQuickAdd } from '@shared/types';
+import s from './ConfirmChip.module.less';
+import shared from '../shared.module.less';
 
 interface ConfirmChipProps {
 	parsed: ParsedQuickAdd;
@@ -23,13 +23,13 @@ export function ConfirmChip({ parsed, onConfirm, onCancel, busy }: ConfirmChipPr
 		.join(' · ');
 
 	return (
-		<div className="confirm-chip" role="status">
-			<span className="confirm-chip__summary">{summary}</span>
-			<div className="confirm-chip__actions">
-				<button type="button" className="button button--ghost" onClick={onCancel} disabled={busy}>
+		<div className={s.root} role="status">
+			<span>{summary}</span>
+			<div className={s.actions}>
+				<button type="button" className={cn(shared.button, shared.ghost)} onClick={onCancel} disabled={busy}>
 					Cancel
 				</button>
-				<button type="button" className="button" onClick={onConfirm} disabled={busy}>
+				<button type="button" className={shared.button} onClick={onConfirm} disabled={busy}>
 					{busy ? 'Saving...' : 'Confirm'}
 				</button>
 			</div>

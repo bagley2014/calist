@@ -1,9 +1,10 @@
-import './ListView.less';
-
+import cn from 'classnames';
 import type { Item } from '@shared/types';
 import { expandRecurringItems, type ItemOccurrence } from '../lib/recurrence';
 import { buildChipSummary, epochSecondsToDateKey, getDayHeading, priorityClass } from '../lib/formatters';
 import { useMemo } from 'react';
+import s from './ListView.module.less';
+import shared from '../shared.module.less';
 
 interface ListViewProps {
 	items: Item[];
@@ -66,17 +67,17 @@ export function ListView({
 	}, new Map());
 
 	return (
-		<section className="stack">
-			<div className="section-head">
+		<section className={shared.stack}>
+			<div className={shared.sectionHead}>
 				<div>
-					<span className="eyebrow">List</span>
+					<span className={shared.eyebrow}>List</span>
 				</div>
-				<div className="section-head__actions">
-					<button type="button" className="button button--ghost" onClick={onToggleShowCompleted}>
+				<div className={shared.sectionActions}>
+					<button type="button" className={cn(shared.button, shared.ghost)} onClick={onToggleShowCompleted}>
 						{showCompleted ? 'Hide completed' : 'Show completed'}
 					</button>
 					{activeDay ? (
-						<button type="button" className="button button--ghost" onClick={onClearDayFilter}>
+						<button type="button" className={cn(shared.button, shared.ghost)} onClick={onClearDayFilter}>
 							Clear day filter
 						</button>
 					) : null}
@@ -84,24 +85,24 @@ export function ListView({
 			</div>
 
 			{undatedItems.length > 0 ? (
-				<div className="list-group">
+				<div className={s.group}>
 					<h3>To-Do</h3>
 					{undatedItems.map((occ) => (
 						<article
 							key={`${occ.item.id}-undated`}
-							className={`item-card ${priorityClass(occ.item.priority)} ${occ.item.completed ? 'item-card--completed' : ''}`}
+							className={cn(s.card, shared[priorityClass(occ.item.priority)], occ.item.completed && s.completed)}
 							onClick={() => onSelectItem(occ.item.id)}
 						>
 							<div>
-								<div className="item-card__title-row">
+								<div className={s.titleRow}>
 									<h4>{occ.item.title}</h4>
-									{occ.item.rrule ? <span className="item-card__repeat">Repeat</span> : null}
+									{occ.item.rrule ? <span className={s.repeat}>Repeat</span> : null}
 								</div>
 								<p>{buildChipSummary(occ.item)}</p>
 							</div>
 							<button
 								type="button"
-								className="button button--ghost"
+								className={cn(shared.button, shared.ghost)}
 								onClick={(event) => {
 									event.stopPropagation();
 									onToggleComplete(occ.item, !occ.item.completed);
@@ -115,18 +116,18 @@ export function ListView({
 			) : null}
 
 			{[...groups.entries()].map(([dayKey, groupOccs]) => (
-				<div className="list-group" key={dayKey}>
+				<div className={s.group} key={dayKey}>
 					<h3>{getDayHeading(groupOccs[0].occurrenceStartsAt ?? 0)}</h3>
 					{groupOccs.map((occ) => (
 						<article
 							key={`${occ.item.id}-${occ.occurrenceStartsAt}`}
-							className={`item-card ${priorityClass(occ.item.priority)} ${occ.item.completed ? 'item-card--completed' : ''}`}
+							className={cn(s.card, shared[priorityClass(occ.item.priority)], occ.item.completed && s.completed)}
 							onClick={() => onSelectItem(occ.item.id)}
 						>
 							<div>
-								<div className="item-card__title-row">
+								<div className={s.titleRow}>
 									<h4>{occ.item.title}</h4>
-									{occ.item.rrule ? <span className="item-card__repeat">Repeat</span> : null}
+									{occ.item.rrule ? <span className={s.repeat}>Repeat</span> : null}
 								</div>
 								<p>{buildChipSummary(occ.item)}</p>
 							</div>
@@ -135,7 +136,7 @@ export function ListView({
 				</div>
 			))}
 
-			{visibleOccurrences.length === 0 ? <div className="empty-state">No items match the current filter.</div> : null}
+			{visibleOccurrences.length === 0 ? <div className={s.empty}>No items match the current filter.</div> : null}
 		</section>
 	);
 }
