@@ -51,15 +51,16 @@
 	justify-content: space-between;
 	/* compact vertical spacing */
 	padding: 0.45rem 0.5rem;
-	background: transparent;
+	background: linear-gradient(90deg, var(--priority-tint, transparent) 0%, transparent 64%), transparent;
 	border-radius: 0;
 	border-bottom: 1px dashed var(--line);
-	border-left: 2px solid var(--line);
+	border-left: 3px solid var(--priority-color, var(--line));
 	margin: 0;
 
 	h4 {
 		margin: 0;
 		font-size: 1rem;
+		color: var(--priority-text, var(--ink));
 	}
 
 	p {

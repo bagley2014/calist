@@ -70,13 +70,19 @@
 	font-size: 0.74rem;
 	border-radius: 999px;
 	padding: 0.22rem 0.55rem;
-	background: rgba(16, 22, 43, 0.9);
-	border-left: 4px solid transparent;
+	background:
+		linear-gradient(90deg, var(--priority-tint, rgba(95, 125, 255, 0.1)) 0%, rgba(16, 22, 43, 0.92) 68%),
+		rgba(16, 22, 43, 0.92);
+	border-left: 4px solid var(--priority-color, transparent);
+	color: var(--priority-text, var(--ink));
+	font-weight: 600;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
 
 .overflow {
-	border-left-color: var(--low);
+	--priority-color: var(--low);
+	--priority-tint: rgba(103, 192, 165, 0.16);
+	--priority-text: #d8f5ec;
 }
