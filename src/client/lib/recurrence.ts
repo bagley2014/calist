@@ -13,11 +13,11 @@ export interface ItemOccurrence {
  * Exceptions stored in item.exceptions are filtered out.
  */
 export function expandRecurringItems(items: Item[], windowStart: Date, windowEnd: Date): ItemOccurrence[] {
-	const result: ItemOccurrence[] = [];
+	const itemOccurrences: ItemOccurrence[] = [];
 
 	for (const item of items) {
 		if (!item.rrule || item.startsAt === null) {
-			result.push({ item, occurrenceStartsAt: item.startsAt });
+			itemOccurrences.push({ item, occurrenceStartsAt: item.startsAt });
 			continue;
 		}
 
@@ -29,12 +29,30 @@ export function expandRecurringItems(items: Item[], windowStart: Date, windowEnd
 			for (const date of dates) {
 				const ts = Math.floor(date.getTime() / 1000);
 				if (!item.exceptions.includes(ts)) {
-					result.push({ item, occurrenceStartsAt: ts });
+					itemOccurrences.push({ item, occurrenceStartsAt: ts });
 				}
 			}
 		} catch {
 			// If the rrule can't be parsed, fall back to showing the anchor date.
-			result.push({ item, occurrenceStartsAt: item.startsAt });
+			itemOccurrences.push({ item, occurrenceStartsAt: item.startsAt });
+		}
+	}
+
+	const result: ItemOccurrence[] = [];
+
+	for (const occ of itemOccurrences) {
+		result.push(occ);
+
+		if (occ.item.isAllDay && occ.item.endsAt && occ.occurrenceStartsAt) {
+			const startDate = new Date(occ.occurrenceStartsAt * 1000);
+			const endDate = new Date(occ.item.endsAt * 1000);
+			const dayCount = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
+			for (let i = 1; i <= dayCount; i++) {
+				const nextDay = new Date(startDate);
+				nextDay.setDate(startDate.getDate() + i);
+				result.push({ item: occ.item, occurrenceStartsAt: Math.floor(nextDay.getTime() / 1000) });
+			}
 		}
 	}
 
